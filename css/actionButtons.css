@@ -1,0 +1,196 @@
+.klassName,
+.return,
+.regist {
+  display: inline-block;
+  position: relative;
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  border-radius: 30px;
+  color: var(--main-text-color);
+  background-color: var(--button-bg-color);
+  padding: 0 3px;
+  text-align: center;
+  width: 50px;
+
+  transition: width 0.5s;
+}
+
+.klassName:hover,
+.return:hover,
+.regist:hover {
+  background-color: var(--button-hover-bg);
+  width: 80px;
+}
+
+.klassName:focus,
+.return:focus,
+.regist:focus {
+  background-color: var(--button-hover-bg);
+  width: 80px;
+}
+
+.attendKlassSelect li,
+.KlassSelect li,
+.actionButtons li {
+  display: inline-block;
+}
+
+/* ************************科目選択ボタン********************* */
+.subjectName {
+  display: inline-block;
+  position: relative;
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  border-radius: 30px;
+  color: var(--main-text-color);
+  background-color: var(--button-bg-color);
+  padding: 5px 10px;
+  text-align: center;
+
+  transition: padding 0.3s;
+  opacity: 0;
+}
+
+.subjectName:hover,
+.subjectName:focus {
+  background-color: var(--button-hover-bg);
+  padding: 15px 10px;
+  border-bottom: 3px solid black;
+}
+
+.subjectSelect li {
+  display: inline-block;
+  position: relative;
+}
+
+.subjectSelect ul {
+  display: block;
+  background-color: var(--sub-bg-color);
+  max-width: 80%;
+  margin-left: 10%;
+  border-radius: 30px;
+  padding: 10px;
+}
+
+.subjectSelect {
+  text-align: center;
+}
+
+/* 科目ボタン登場アニメーション */
+.subjectAnime1 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime2 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime3 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime4 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime5 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime6 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime7 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime8 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime9 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime10 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime11 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime12 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime13 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime14 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime15 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime16 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime17 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime18 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime19 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime20 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime21 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime22 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime23 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime24 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime25 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime26 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime27 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime28 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime29 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime30 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime31 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime32 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+.subjectAnime33 {
+  animation: subjectButton forwards 0.5s ease-out 0s;
+}
+
+@keyframes subjectButton {
+  0% {
+    transform: translateY(-300px);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(80px);
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}

@@ -1,0 +1,43 @@
+.dataTable table {
+  margin-bottom: 10%;
+  margin-left: 10px;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.dataTable table tbody th,
+.dataTable table tbody td {
+  border: solid 1px black;
+  width: 40px;
+  border-collapse: collapse;
+
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.dataTable th {
+  font-weight: bolder;
+  border-bottom: solid 3px black;
+  background-color: white;
+
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.dataTable table tbody th:nth-child(2),
+.dataTable table tbody td:nth-child(2) {
+  min-width: 100px;
+  text-align: left;
+}
+
+.thirdSection .newAddition a {
+  margin-left: 10px;
+  border: dotted 1px orange;
+  padding: 0px 10px;
+  margin-bottom: 2xp;
+  border-radius: 10px;
+  color: orange;
+  text-shadow: 1px 1px 1px yellow;
+}

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>成績管理2025年（前期）</title>
+
+    <!-- firestoreを使う準備 -->
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore-compat.js"></script>
+    <!-- login機能 -->
+    <script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.css" />
+    <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+    <script type="module" src="js/01_firebase_initialize.js"></script>
+
+    <!-- 基本となる配列 -->
+    <script src="js/00_base_arrays.js"></script>
+
+    <!-- <script type="module" src="js/05_login.js" defer></script> -->
+
+    <!-- 自作のスクリプト -->
+    <script src="js/07_commonFunc.js" defer></script>
+    <script src="js/08_swichies.js" defer></script>
+    <script src="js/09_section_first.js" defer></script>
+    <script src="js/10_section_second.js" defer></script>
+    <script src="js/11_section_third.js" defer></script>
+    <script src="js/12_section_forth.js" defer></script>
+    <script src="js/13_section_seventh.js" defer></script>
+    <script src="js/02examStringArray_1st.js" defer></script>
+    <script src="js/03examStringArray_2nd.js" defer></script>
+
+    <!-- 自作のスタイルシート -->
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/buttonGrades.css" />
+    <link rel="stylesheet" href="css/navigation.css" />
+    <link rel="stylesheet" href="css/footer.css" />
+    <link rel="stylesheet" href="css/tooltip.css" />
+    <link rel="stylesheet" href="css/pageTop.css" />
+    <link rel="stylesheet" href="css/actionButtons.css" />
+    <link rel="stylesheet" href="css/tableStyle.css" />
+    <link rel="stylesheet" href="css/balloon.css" />
+    <link rel="stylesheet" href="css/loader.css" />
+    <link rel="stylesheet" href="css/section_third3.css" />
+    <link rel="stylesheet" href="css/section_forth.css" />
+
+    <!--  -->
+  </head>
+  <body>
+    <header>
+      <!-- ロゴやステータス表示をする場所 -->
+      <div class="Logos">
+        <div class="logo">
+          <!-- <a href="https://grade2023-ver2.web.app">KURU-ZARTAR</a> -->
+          <a href="#">KURU-ZARTAR</a>
+        </div>
+      </div>
+
+      <div class="gradeGroup">
+        <div class="grades">
+          <a href="#" class="displayButton">１年</a>
+
+          <a href="#" class="gradesButton">１年</a>
+          <a href="#" class="gradesButton">２公</a>
+          <a href="#" class="gradesButton">２民</a>
+          <a href="#" class="gradesButton">専</a>
+        </div>
+        <!-- <input type="text" id="gradeText" value="１年" />
+        <input type="text" id="selectedAppli" value="" />
+        <input type="text" id="targetSubject" value="" />
+        <input type="text" id="Selected_Klass" value="" />
+        <input type="text" id="firebase_ID" value="" />
+        <input type="text" id="field_id" value="" /> -->
+
+        <input type="text" id="gradeText" value="１年" style="display: none" />
+        <input type="text" id="selectedAppli" value="" style="display: none" />
+        <input type="text" id="targetSubject" value="" style="display: none" />
+        <input type="text" id="Selected_Klass" value="" style="display: none" />
+        <input type="text" id="firebase_ID" value="" style="display: none" />
+        <input type="text" id="field_id" value="" style="display: none" />
+      </div>
+
+      <div class="logoutButton">
+        <a href="#" id="logout">login</a>
+      </div>
+    </header>
+
+    <!-- <div id="firebaseui-auth-container"></div> -->
+
+    <section class="navigation">
+      <div class="wrapper">
+        <ul>
+          <li><a href="#" class="naviButton naviAnime1">1.GPAホーム</a></li>
+          <li><a href="#" class="naviButton naviAnime2">2.出席率</a></li>
+          <li><a href="#" class="naviButton naviAnime3">3.授業態度</a></li>
+          <li><a href="#" class="naviButton naviAnime4">4.課題・発表</a></li>
+          <li><a href="#" class="naviButton naviAnime5">5.ミニテスト</a></li>
+          <li><a href="#" class="naviButton naviAnime6">6.評価テスト</a></li>
+          <li><a href="#" class="naviButton naviAnime7">7.科目別評価</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ---------------------GPAの総合点を表示する（GPA順）----------------- -->
+    <section class="firstSection">
+      <div class="wrapper">
+        <div class="GPA_loader">
+          <div class="loader3"></div>
+        </div>
+
+        <div><h1>GPA総合点</h1></div>
+
+        <table class="totalGPA">
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ----------------------出席率の表示------------------------------- -->
+    <section class="secondSection">
+      <div class="wrapper">
+        <div><h1>出席率</h1></div>
+
+        <div class="attendKlassSelect">
+          <ul>
+            <li><a href="#" class="klassName">1A</a></li>
+            <li><a href="#" class="klassName">1B</a></li>
+          </ul>
+        </div>
+
+        <div class="loader"></div>
+
+        <div class="attendTable">
+          <table>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------------------態度・課題・テスト------------------------------- -->
+    <section class="thirdSection">
+      <div class="wrapper">
+        <!-- 科目選択 -->
+        <div class="subjectSelect">
+          <ul>
+            <li><a href="#" class="subjectName subjectAnime1">科目１</a></li>
+            <li><a href="#" class="subjectName subjectAnime2">科目１</a></li>
+            <li><a href="#" class="subjectName subjectAnime3">科目１</a></li>
+            <li><a href="#" class="subjectName subjectAnime4">科目１</a></li>
+            <li><a href="#" class="subjectName subjectAnime5">科目１</a></li>
+            <li><a href="#" class="subjectName subjectAnime6">科目１</a></li>
+            <li><a href="#" class="subjectName subjectAnime7">科目１</a></li>
+            <li><a href="#" class="subjectName subjectAnime8">科目１</a></li>
+            <li><a href="#" class="subjectName subjectAnime9">科目１</a></li>
+          </ul>
+        </div>
+
+        <div class="inputTitle" hidden><h1>態度・課題・テスト</h1></div>
+
+        <div class="KlassSelect" hidden>
+          <ul>
+            <li><a href="#" class="klassName">1A</a></li>
+            <li><a href="#" class="klassName">1B</a></li>
+          </ul>
+        </div>
+
+        <div class="newAddition" hidden>
+          <a href="#">新規追加</a>
+        </div>
+
+        <div class="loader" hidden></div>
+
+        <div class="dataTable" hidden>
+          <table>
+            <tbody>
+              <tr>
+                <th></th>
+              </tr>
+              <tr>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="editTitle" style="text-align: center" hidden><h1>態度・課題・テスト</h1></div>
+
+        <div class="subjectDetail" style="text-align: center" hidden>
+          <input type="text" class="subjectTitle" value="成績用授業名" />
+          <input type="date" class="subjectDate" value="2024-01-20" />
+          <select class="subjectPoint">
+            <option value="100" selected>100</option>
+          </select>
+          <textarea class="subjectMemo" cols="30" rows="1">詳細</textarea>
+        </div>
+
+        <div class="actionButtons" style="text-align: center" hidden>
+          <ul>
+            <li><a href="#" class="return">戻る</a></li>
+            <li><a href="#" class="regist">保存</a></li>
+            <li><a href="#" class="delete">削除</a></li>
+          </ul>
+        </div>
+
+        <div class="inputTable" hidden>
+          <table>
+            <tbody>
+              <tr>
+                <th>No</th>
+                <th>名前</th>
+                <th>提出<input type="checkbox" name="checkAll" id="checkAll" checked /></th>
+                <th>日付<input type="date" name="dateAll" id="dateAll" /></th>
+                <th>
+                  点数<select name="selectAll" id="selectAll">
+                    <option value="100" selected>100</option>
+                  </select>
+                </th>
+                <th>備考<input type="text" name="memoAll" id="memoAll" /></th>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ----------------------------評価テスト----------------------- -->
+    <section class="forthSection">
+      <div class="wrapper">
+        <div class="evaluateError" style="display: none">
+          <h1>対象のクラスではありません。</h1>
+        </div>
+
+        <div class="evaluateTitle">
+          <h1>評価テスト得点率（模試・週テスト）</h1>
+        </div>
+
+        <div class="evaluateTable">
+          <table>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- -----------------------科目別のGPA----------------------- -->
+    <section class="seventhSection">
+      <!-- 授業時間数を保存する -->
+      <input type="text" id="term_count" hidden />
+
+      <div class="wrapper">
+        <div class="subjectSelect">
+          <ul>
+            <li><a href="#" class="subjectName subjectAnime1">科目１</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="wrapper">
+        <h1>科目別集計</h1>
+
+        <div class="GPA_total_loader">
+          <div class="loader2"></div>
+        </div>
+        <br />
+
+        <div class="subject_GPA_wrapper">
+          <table class="subjectGPA_Table">
+            <tbody>
+              <tr>
+                <th></th>
+                <th>名前</th>
+                <th>出席率</th>
+                <th>配点</th>
+                <th>態度</th>
+                <th>配点</th>
+                <th>課題</th>
+                <th>配点</th>
+                <th>ミニテスト</th>
+                <th>配点</th>
+                <th>評価テスト</th>
+                <th>配点</th>
+                <th>合計</th>
+                <th>優良可</th>
+                <th>GPA</th>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </body>
+
+  <a href="#" class="pagetop"><div class="pagetop_arrow"></div></a>
+
+  <footer class="footer">
+    <p class="copyright">©Ryusaku Sakihara All Right Reserved.</p>
+  </footer>
+</html>

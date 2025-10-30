@@ -1,0 +1,61 @@
+:root {
+  /* --main-color: #ecc795; */
+  --main-color: #e0bad4;
+  --border-color: #5f3f88;
+  /* --button-bg-color: #ecc795; */
+  --button-bg-color: orange;
+  --button-hover-bg: antiquewhite;
+  --main-text-color: rgb(68, 68, 68);
+  /* --main-bg-color: #e3e4e6; */
+  /* --main-bg-color: #e0bad4; */
+  --main-bg-color: white;
+  /* --sub-bg-color: #e3e4e6; */
+  /* --main-bg-color: white; */
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--main-bg-color);
+  /* overflow: hidden; */
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: var(--main-text-color);
+}
+
+a:visited {
+  color: inherit;
+}
+
+section {
+  display: none;
+}
+
+header {
+  position: relative;
+  background-color: var(--main-color);
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+}
+
+.gradeGroup {
+  display: inline-block;
+}
+
+.Logos {
+  display: inline-block;
+}
+
+.logoutButton {
+  display: inline-block;
+}

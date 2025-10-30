@@ -1,0 +1,215 @@
+.totalGPA,
+.attendTable table,
+.inputTable table {
+  border-collapse: collapse;
+  margin: 0 auto;
+  margin-bottom: 20%;
+}
+
+.subjectGPA_Table {
+  border-collapse: collapse;
+  display: inline-block;
+  margin-bottom: 20%;
+}
+
+.subject_GPA_wrapper {
+  text-align: center;
+  width: 90%;
+}
+
+.totalGPA th,
+.attendTable th {
+  /* 縦スクロール時に固定する */
+  /* position: -webkit-sticky; */
+  position: sticky;
+  top: 0;
+  /* tbody内のセルより手前に表示する */
+  z-index: 1;
+
+  border-left: 1px dotted black;
+  border-right: 1px dotted black;
+  border-top: 1px solid black;
+  border-bottom: 2px solid black;
+
+  background-color: white;
+  /* width: 30px; */
+  max-width: 30px;
+  max-height: 100px;
+  overflow: visible;
+
+  /* white-space: nowrap; */
+}
+
+.totalGPA th {
+  /* 縦スクロール時に固定する */
+  /* position: -webkit-sticky; */
+  position: sticky;
+  top: 0;
+  /* tbody内のセルより手前に表示する */
+  z-index: 1;
+
+  border-left: 1px dotted black;
+  border-right: 1px dotted black;
+  border-top: 1px solid black;
+  border-bottom: 2px solid black;
+
+  background-color: white;
+  /* width: 30px; */
+  max-width: 30px;
+  max-height: 100px;
+  overflow: visible;
+
+  /* white-space: nowrap; */
+}
+
+.firstSection h1 {
+  text-align: center;
+}
+
+.totalGPA td,
+.subjectGPA_Table td,
+.attendTable table td {
+  border: 1px dotted black;
+  /* width: 30px; */
+  max-width: 30px;
+  max-height: 100px;
+  overflow: hidden;
+  /* white-space: nowrap; */
+}
+
+.attendTable table td {
+  text-align: center;
+  font-size: 12px;
+}
+
+/* .attendTable table th {
+  min-width: 100px;
+} */
+
+.totalGPA td {
+  text-align: center;
+}
+
+.totalGPA td:nth-child(1) {
+  width: 3px;
+  text-align: center;
+}
+
+.totalGPA th:nth-child(2),
+.totalGPA td:nth-child(2),
+.attendTable table th:nth-child(2),
+.attendTable table td:nth-child(2) {
+  white-space: nowrap;
+  max-width: 100px;
+  overflow-x: hidden;
+  padding-left: 5px;
+}
+
+.attendTable table th:nth-of-type(2),
+.attendTable table td:nth-of-type(2) {
+  font-size: 16px;
+  text-align: left;
+  border-right: 1px solid #000;
+}
+
+.totalGPA th:nth-of-type(3) {
+  min-width: 50px;
+  text-align: left;
+  border-right: 1px solid #000;
+}
+
+.totalGPA td:nth-of-type(3) {
+  border-right: 1px solid #000;
+}
+
+.totalGPA tr:nth-child(2n),
+.attendTable table tr:nth-child(2n) {
+  background-color: antiquewhite;
+}
+
+.totalGPA tr:nth-child(5n + 1),
+.attendTable table tr:nth-child(2n) {
+  border-bottom: 1px solid black;
+}
+
+.klass_divide_bottomline {
+  border-bottom: 2px solid black;
+}
+
+/* 科目でのGPA集計 */
+.subjectGPA_Table th {
+  /* 縦スクロール時に固定する */
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  /* tbody内のセルより手前に表示する */
+  z-index: 1;
+
+  border-left: 1px dotted black;
+  border-right: 1px dotted black;
+  border-top: 1px solid black;
+  border-bottom: 2px solid black;
+
+  background-color: white;
+
+  overflow: visible;
+}
+
+.subjectGPA_Table td {
+  border: 1px dotted black;
+  text-align: center;
+
+  max-width: 30px;
+  max-height: 100px;
+}
+
+.subjectGPA_Table th:nth-of-type(2) {
+  width: 100px;
+}
+
+.subjectGPA_Table td:nth-of-type(2) {
+  text-align: left;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.subjectGPA_Table th:nth-of-type(3),
+.subjectGPA_Table th:nth-of-type(5),
+.subjectGPA_Table th:nth-of-type(7),
+.subjectGPA_Table th:nth-of-type(9),
+.subjectGPA_Table th:nth-of-type(11),
+.subjectGPA_Table th:nth-of-type(13),
+.subjectGPA_Table th:nth-of-type(16) {
+  border-left: 2px solid #000;
+  width: 100px;
+}
+
+.subjectGPA_Table td:nth-of-type(3),
+.subjectGPA_Table td:nth-of-type(5),
+.subjectGPA_Table td:nth-of-type(7),
+.subjectGPA_Table td:nth-of-type(9),
+.subjectGPA_Table td:nth-of-type(11),
+.subjectGPA_Table td:nth-of-type(13),
+.subjectGPA_Table td:nth-of-type(16) {
+  border-left: 2px solid #000;
+}
+
+.seventhSection h1 {
+  text-align: center;
+}
+
+.subjectGPA_Table tr:nth-of-type(2n) {
+  background-color: antiquewhite;
+}
+
+.subjectGPA_Table tr:nth-of-type(5n) {
+  border-bottom: 1px solid #000;
+}
+
+.GPA_row_red td {
+  background-color: coral;
+}
+
+.inputTable tr:nth-of-type(5n + 1) {
+  border-bottom: 1px solid #000;
+}

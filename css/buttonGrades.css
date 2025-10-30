@@ -1,0 +1,73 @@
+.gradesButton {
+  display: inline-block;
+  position: relative;
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  border-radius: 30px;
+  color: var(--main-text-color);
+  background-color: var(--button-bg-color);
+  padding: 0 3px;
+  text-align: center;
+  /* min-width: 50px; */
+  width: 50px;
+  opacity: 0;
+
+  transition: width 0.5s;
+}
+
+.gradesButton:hover {
+  background-color: var(--button-hover-bg);
+  width: 80px;
+}
+
+.gradesButton:focus {
+  /* display: inline-block; */
+  opacity: 1;
+  background-color: var(--button-hover-bg);
+  width: 80px;
+}
+
+.grades {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  /* text-align: center; */
+
+  background-color: var(--main-bg-color);
+  /* border-left: 1px solid var(--border-color); */
+  border-right: 1px solid var(--border-color);
+  border-top: 1px solid var(--border-color);
+  border-radius: 30px;
+  width: 70px;
+
+  transition: width 1s;
+
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.grades:hover {
+  width: 340px;
+}
+
+.grades:hover > .gradesButton {
+  opacity: 1;
+}
+
+.grades:has(.displayButton:focus),
+.grades:has(.gradesButton:focus) {
+  width: 340px;
+}
+
+.grades:has(.displayButton:focus) > .gradesButton,
+.grades:has(.gradesButton:focus) > .gradesButton {
+  opacity: 1;
+}
+
+.displayButton {
+  display: inline-block;
+  position: relative;
+  text-align: center;
+  width: 50px;
+  margin-left: 10px;
+}

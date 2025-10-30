@@ -1,0 +1,33 @@
+/* 補足説明するテキストのスタイル */
+.tooltip {
+  position: relative;
+  cursor: pointer;
+  padding: 0 5px;
+  font-size: 0.9em;
+  color: var(--main-text-color);
+}
+
+.description_top {
+  width: 150px;
+  position: absolute;
+  left: 50%;
+  bottom: 80%;
+  transform: translateX(-50%);
+  margin-bottom: 8px;
+  padding: 8px;
+  border-radius: 10px;
+  background-color: var(--button-bg-color);
+  font-size: 0.7em;
+  color: var(--main-text-color);
+  text-align: center;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 1;
+  transition: 0.5s all;
+}
+
+.tooltip:hover .description_top {
+  bottom: 100%;
+  visibility: visible;
+  opacity: 1;
+}
