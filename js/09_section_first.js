@@ -45,60 +45,61 @@ function list_get_curriculum(target_table) {
     target_klass = "専攻科";
   }
 
-  // カリキュラムから対象の学年の一覧を取得する
-  const curriculum_list = curriculum_relation_lsit.filter((x) => x[1] == target_klass);
-  // console.log(curriculum_list);
+  // 学年からカリキュラム一覧を取得
+  const target_curriculum = get_curriculum_list(target_klass);
+
+  const curriculum_list = target_curriculum.map((x) => x[3]);
 
   return curriculum_list;
 }
 
 // firestoreからデータを取得
 async function get_GPA_main_data(curriculum_list) {
-  // 学年の取得
-  var target_grade = document.querySelector(".displayButton").textContent;
-
-  // カリキュラム番号一覧を作成
-  const curriculum_numbers = curriculum_list.map((x) => x[0]);
-  // console.log(curriculum_numbers);
-
-
   // firebaseからコレクションを取ってくる
-  const GPA_collection = await FireStoreApp.collection("GPA_Subject_Data").get();
+  const GPA_collection = await FirestoreApp.collection("GPA_Subject_Data").get();
 
   // コレクションの中のドキュメント一覧
-  const target_documents = GPA_collection.docs.map((x) => x.id);
-  // console.log(target_documents);
-  
+  const target_document = GPA_collection.docs;
+
+  // 確認の為にID（科目名）を一覧で取得する。
+  const subject_list = [];
+  target_document.forEach((item) => {
+    subject_list.push(item.id);
+  });
+
+  // データがあるものだけ絞ってくる
+  const target_list = [];
+  curriculum_list.forEach((item) => {
+    if (subject_list.indexOf(item) >= 0) {
+      target_list.push(item);
+    }
+  });
+
+  // ビジネスマナーのようにかぶるときに片方を選べるように学年を確認する
+  const target_grade = document.getElementsByClassName("displayButton")[0].innerText;
+
   // docIDからデータを取ってくる
   const GPA_raw_data = [];
-  for (let index = 0; index < target_documents.length; index++) {
-    const element = target_documents[index];
+  for (let index = 0; index < target_list.length; index++) {
+    const element = target_list[index];
 
-    if (curriculum_numbers.includes(element)) {
-      
-      await FireStoreApp.collection("GPA_Subject_Data")
-        .doc(element)
-        .get()
-        .then((item) => {
-          const target_data = item.data();
-          GPA_raw_data.push([JSON.parse(target_data.main_data), target_data.klass_term, target_data.subject_name]);
-          // console.log([JSON.parse(target_data.main_data), target_data.klass_term, target_data.subject_name]);
-        });
-    }
+    await FirestoreApp.collection("GPA_Subject_Data")
+      .doc(element)
+      .get()
+      .then((item) => {
+        const target_data = item.data();
 
-    //　GPA一覧確認用
+        GPA_raw_data.push([JSON.parse(target_data.main_data), target_data.klass_term, target_data.subject_name]);
+        //　GPA一覧確認用
+        // console.log([JSON.parse(target_data.main_data), target_data.klass_term, target_data.subject_name]);
+      });
   }
-  
-  if (target_grade=="専") {
-    target_grade = "専攻科"
-  }
-  
-  const student_count = student_list.filter((x) => x[6] == target_grade).length;
+
+  const student_count = student_info.filter((x) => x[6] == target_grade).length;
   // console.log(student_count);
   // console.log(GPA_raw_data);
   const GPA_filtered = GPA_raw_data.filter((x) => x[0].length == student_count);
-  console.log(GPA_filtered);
-  
+
   return [GPA_filtered, curriculum_list];
 }
 
@@ -188,11 +189,7 @@ function greade_par_average(table_data) {
 // テーブルに入れる
 async function table_set_GPA_data(body, header, table) {
   // 学年を取得
-  var grade = document.querySelector(".displayButton").innerText;
-
-  if (grade=="専") {
-    grade="専攻科"
-  }
+  const grade = document.getElementById("gradeText").value;
 
   const export_data = {
     header: JSON.stringify(header),
@@ -327,13 +324,11 @@ function GPA_data_editing(data) {
     if (index == 0) {
       student.forEach((element) => {
         // [No、名前、[点数×コマ数,コマ数合計]、最初の点数]
-        Send_Data.push([element[0], element[1], [element[3] * Number(times), Number(times)], element[2]]);
+        Send_Data.push([element[0], element[1], [element[3] * Number(times), Number(times)], element[3]]);
       });
     } else {
       student.forEach((element, jindex) => {
-        // console.log(element);
-        // element[2]は優良不可、element[3]は１，２，３
-        Send_Data[jindex].push(element[2]);
+        Send_Data[jindex].push(element[3]);
         Send_Data[jindex][2][0] = Send_Data[jindex][2][0] + element[3] * Number(times);
         Send_Data[jindex][2][1] = Send_Data[jindex][2][1] + Number(times);
       });
@@ -361,12 +356,12 @@ function GPA_main_table(data) {
         td.innerText = greade_par_average;
       } else {
         td.innerText = element;
-        if (element == "不可") {
+        if (element == 0) {
           td.style.backgroundColor = "coral";
-        } else if (element == "可") {
+        } else if (element == 1) {
           td.style.color = "coral";
           td.style.fontWeight = "bold";
-        } else if (element == "良") {
+        } else if (element == 2) {
           td.style.color = "blue";
           td.style.fontWeight = "bold";
         }
@@ -415,7 +410,7 @@ async function reserve_firebase(header, main) {
 
   const export_data = { export_data: JSON.stringify(Send_Data) };
 
-  await FireStoreApp.collection("GPA_export_data")
+  await FirestoreApp.collection("GPA_export_data")
     .doc(grade)
     .set(export_data)
     .then(() => {

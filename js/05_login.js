@@ -1,33 +1,36 @@
-// ログインしていなかったら---------------------------------
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
     var uid = user.uid;
-    // input_userName(user.email.match(/.*@/));
-    // console.log(user.email);
+
+    //ログインが確認出来たら
+    console.log(user);
+    //   User_Data_Display(user)
   } else {
     //ログインが確認できなかったら
-    const result = window.confirm("ログインしますか。");
-    if (result) {
-      Sign_In_google();
-    }
+    console.log(user);
+
+    Sign_In_google();
   }
 });
 
-// サインインをリダイレクトで-----------------------------------------------------------
-const Sign_In_google = async () => {
-  var useCred = await firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider()); //ポップアップで
-  // await firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider());
-  // var userCred = await firebase.auth().getRedirectResult();
-  // console.log(userCred);
+const Sign_In_google = () => {
+  // var provider = new firebase.auth.GoogleAuthProvider();
+  firebase.auth().languageCode = "ja";
+  firebase
+    .auth()
+    // .signInWithRedirect(provider)
+    .signInWithPopup(new firebase.auth.GoogleAuthProvider())
+    .then((result) => {
+      /** @type {firebase.auth.OAuthCredential} */
+    })
+    .catch((error) => {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      // The email of the user's account used.
+      var email = error.email;
+      // The firebase.auth.AuthCredential type that was used.
+      var credential = error.credential;
+      console.log(errorMessage);
+    });
 };
-
-// ログアウト----------------------------------------------
-document.getElementById("logout").addEventListener("click", () => {
-  Sign_In_google();
-});
-
-const input_userName = (userName) => {
-  document.getElementById("logout").innerText = userName;
-};
-//--------------------------------------
-//<a href="#" id="logout">logout</a>

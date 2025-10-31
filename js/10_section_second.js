@@ -33,10 +33,11 @@ function attend_klass_push(e) {
 // 出席率を取得--------------------------------------------------
 async function Attend_Table_Create(klass_name) {
   // 学年の取込
-  const grade = document.querySelector(".displayButton").innerText;
+  const grade = document.getElementById("gradeText").value;
+  // console.log(grade);
 
   // 学年からカリキュラム一覧を取得(３列目に科目名)
-  const target_curriculum = get_curriculum_list(grade).map((x) => x[0]);
+  const target_curriculum = get_curriculum_list(grade).map((x) => x[3]);
 
   // 出席データを取得して編集する
   var Edited_Attend_Data = await Attend_Data_Edit2(target_curriculum, klass_name);
@@ -50,12 +51,14 @@ async function Attend_Table_Create(klass_name) {
 }
 
 // 出生率のデータを取り込む--------------------------------------------------
-async function Attend_Data_Capture(klass, subject) {
-  // パスの作成
-  const path = subject + klass;
-
+async function Attend_Data_Capture(target_klass, subject_name) {
+  // console.log(subject_name);
+  // console.log(target_klass);
+  if (target_klass == "専") {
+    target_klass = "専攻科";
+  }
   // 出席率の取込
-  const Attend_Datas = await FireStoreApp.collection("Attend_Datas").doc(path).get();
+  const Attend_Datas = await FirestoreApp.collection("Attend_Datas").doc(subject_name).collection("klasses").doc(target_klass).get();
 
   return Attend_Datas.data();
 }
@@ -65,51 +68,35 @@ async function Attend_Data_Edit2(target_curriculum, klass_name) {
   //データを保存する配列
   var Send_Data = [];
 
-  // クラス番号と科目番号を合わせてドキュメントIDの配列を作成
-  target_klass = klass_and_curriculum.filter((x) => x[2] == klass_name)[0][0];
-  const path_array = target_curriculum.map((x) => x + target_klass);
+  for (let index = 0; index < target_curriculum.length; index++) {
+    var attend_datas = await Attend_Data_Capture(klass_name, target_curriculum[index]);
 
-  // 配列から一気に必要なデータを取得
-  const conbin_array = await FireStoreApp.collection("Attend_Datas")
-    .where(firebase.firestore.FieldPath.documentId(), "in", path_array)
-    .get();
+    // 授業時間が０以上のみ
+    if (!!attend_datas) {
+      if (attend_datas.Execute_Number > 0) {
+        if (Send_Data.length == 0) {
+          // 最初の一回目
 
-  // 返送用
-  var resend_data = [
-    ["", ""],
-    ["No", "名前"],
-  ];
+          Send_Data.push(["", "", attend_datas.Subject_Name]);
+          Send_Data.push(["No", "名前", attend_datas.Execute_Number]);
 
-  // 指数
-  var figures = 0;
-
-  // データを加工
-  conbin_array.forEach((item) => {
-    const export_datas = item.data();
-
-    // 実施時間が０以上だけ表示
-    if (export_datas.Execute_Number > 0) {
-      resend_data[0].push(export_datas.Subject_Name);
-      resend_data[1].push(export_datas.Execute_Number);
-
-      // 名前や出席番号を登録
-      if (figures == 0) {
-        JSON.parse(export_datas.Attend_Rate).forEach((data) => {
-          resend_data.push([data[0], data[1], data[2]]);
-        });
-      } else {
-        JSON.parse(export_datas.Attend_Rate).forEach((data, i) => {
-          resend_data[i + 2].push(data[2]);
-          // console.log(i);
-        });
+          // 番号、氏名、出席率をプッシュ！
+          JSON.parse(attend_datas.Attend_Rate).forEach((data) => {
+            Send_Data.push([data[0], data[1], data[2]]);
+          });
+        } else {
+          // ２回目以降
+          Send_Data[0].push(attend_datas.Subject_Name);
+          Send_Data[1].push(attend_datas.Execute_Number);
+          // 出席率だけプッシュ
+          JSON.parse(attend_datas.Attend_Rate).forEach((data, num) => {
+            Send_Data[num + 2].push(data[2]);
+          });
+        }
       }
-      figures = figures + 1;
     }
-  });
-
-  // console.log(resend_data);
-
-  return resend_data;
+  }
+  return Send_Data;
 }
 
 // テーブルを作成する

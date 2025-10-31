@@ -1,35 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>成績管理2025年（前期）</title>
+    <title>成績管理2024</title>
 
-    <!-- firestoreを使う準備 -->
-    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore-compat.js"></script>
-    <!-- login機能 -->
-    <script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js"></script>
+    <!-- login管理用 -->
+    <script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js" defer></script>
     <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.css" />
-    <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
-    <script type="module" src="js/01_firebase_initialize.js"></script>
-
-    <!-- 基本となる配列 -->
-    <script src="js/00_base_arrays.js"></script>
-
-    <!-- <script type="module" src="js/05_login.js" defer></script> -->
-
-    <!-- 自作のスクリプト -->
-    <script src="js/07_commonFunc.js" defer></script>
-    <script src="js/08_swichies.js" defer></script>
-    <script src="js/09_section_first.js" defer></script>
-    <script src="js/10_section_second.js" defer></script>
-    <script src="js/11_section_third.js" defer></script>
-    <script src="js/12_section_forth.js" defer></script>
-    <script src="js/13_section_seventh.js" defer></script>
-    <script src="js/02examStringArray_1st.js" defer></script>
-    <script src="js/03examStringArray_2nd.js" defer></script>
+    <!-- firebase動作用 -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js" defer></script>
+    <!-- <script src="/__/firebase/init.js?useEmulator=true"></script> -->
 
     <!-- 自作のスタイルシート -->
     <link rel="stylesheet" href="css/header.css" />
@@ -45,7 +29,30 @@
     <link rel="stylesheet" href="css/section_third3.css" />
     <link rel="stylesheet" href="css/section_forth.css" />
 
-    <!--  -->
+    <!-- 自作のスクリプト -->
+    <script src="js/01tempArrays.js" defer></script>
+    <script src="js/02examStringArray_1st.js"></script>
+    <script src="js/03examStringArray_2nd.js"></script>
+    <script type="module" src="js/04_firebase_initialize.js" defer></script>
+    <script src="js/05_login2.js" defer></script>
+    <script src="js/06_initial_datas.js" defer></script>
+    <script src="js/07_commonFunc.js" defer></script>
+    <script src="js/08_swichies.js" defer></script>
+    <script src="js/09_section_first.js" defer></script>
+    <script src="js/10_section_second.js" defer></script>
+    <script src="js/11_section_third.js" defer></script>
+    <script src="js/12_section_forth.js"></script>
+    <script src="js/13_section_seventh.js" defer></script>
+
+    <!-- 書記取得データの配列一覧
+　　　　　カリキュラム一覧　subject_relation_data
+　　　クラスとカリキュラム　klass_curriculum_relation
+　　　　　　　　　学生情報　Student_personal_infomation
+　　　　　　GPA配点データ　Get_GPA_Allocation
+　　 操作とコレクション名　apply_collect_relation
+ -->
+
+    <!-- ヘッダー -->
   </head>
   <body>
     <header>
@@ -58,6 +65,7 @@
       </div>
 
       <div class="gradeGroup">
+        0.
         <div class="grades">
           <a href="#" class="displayButton">１年</a>
 
@@ -66,19 +74,17 @@
           <a href="#" class="gradesButton">２民</a>
           <a href="#" class="gradesButton">専</a>
         </div>
-        <!-- <input type="text" id="gradeText" value="１年" />
-        <input type="text" id="selectedAppli" value="" />
-        <input type="text" id="targetSubject" value="" />
-        <input type="text" id="Selected_Klass" value="" />
-        <input type="text" id="firebase_ID" value="" />
-        <input type="text" id="field_id" value="" /> -->
+        <!-- <input type="text" id="gradeText" value="１年"  />
+        <input type="text" id="selectedAppli" value=""  />
+        <input type="text" id="targetSubject" value=""  />
+        <input type="text" id="Selected_Klass" value=""  />
+        <input type="text" id="firebase_ID" value=""  /> -->
 
         <input type="text" id="gradeText" value="１年" style="display: none" />
         <input type="text" id="selectedAppli" value="" style="display: none" />
         <input type="text" id="targetSubject" value="" style="display: none" />
         <input type="text" id="Selected_Klass" value="" style="display: none" />
         <input type="text" id="firebase_ID" value="" style="display: none" />
-        <input type="text" id="field_id" value="" style="display: none" />
       </div>
 
       <div class="logoutButton">
