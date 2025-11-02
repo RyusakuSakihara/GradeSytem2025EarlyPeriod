@@ -18,19 +18,23 @@ const Sign_In_google = () => {
   firebase.auth().languageCode = "ja";
   firebase
     .auth()
-    // .signInWithRedirect(provider)
-    .signInWithPopup(new firebase.auth.GoogleAuthProvider())
-    .then((result) => {
-      /** @type {firebase.auth.OAuthCredential} */
-    })
+    // リダイレクト方式でサインイン（ポップアップを避ける）
+    .signInWithRedirect(new firebase.auth.GoogleAuthProvider())
     .catch((error) => {
       // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      // The email of the user's account used.
-      var email = error.email;
-      // The firebase.auth.AuthCredential type that was used.
-      var credential = error.credential;
-      console.log(errorMessage);
+      console.error("signInWithRedirect error:", error);
     });
 };
+
+// リダイレクト結果の確認
+firebase
+  .auth()
+  .getRedirectResult()
+  .then((result) => {
+    if (result && result.user) {
+      console.log("Redirect sign-in successful:", result.user.email);
+    }
+  })
+  .catch((error) => {
+    console.error("getRedirectResult error:", error);
+  });
