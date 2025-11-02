@@ -1,49 +1,95 @@
+// ページロード時にlocalStorageからユーザー名を復元
+window.addEventListener("DOMContentLoaded", () => {
+  const savedName = localStorage.getItem("userName");
+  if (savedName) {
+    input_userName(savedName);
+  }
+});
 // ログインしていなかったら---------------------------------
+// 以前はリダイレクト方式を使っていましたが、ポップアップ方式に切り替えました。
+// onAuthStateChanged がサインイン後の表示更新を担当するため、ここでのリダイレクト結果確認は不要です。
+
+// 認証状態の監視
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
     var uid = user.uid;
-    // 表示用にメールアドレスの@より前を取り出す
-    const name = user.email ? user.email.split("@")[0] : "";
+    // 表示用の名前を user.displayName を優先して取得し、無ければメールの@より前を使う
+    const getDisplayName = (u) => {
+      if (!u) return "";
+      // displayName があればそれを使う
+      if (u.displayName && String(u.displayName).trim() !== "")
+        return String(u.displayName).trim();
+      // なければメールの@より前を使う
+      if (u.email) return String(u.email).split("@")[0];
+      return "";
+    };
+
+    const name = getDisplayName(user);
     input_userName(name);
-    // console.log(user.email);
+    localStorage.setItem("userName", name);
+    // console.log(user.email || user.displayName);
   } else {
     //ログインが確認できなかったら
     const result = window.confirm("ログインしますか。");
     if (result) {
       Sign_In_google();
+    } else {
+      input_userName("");
+      localStorage.removeItem("userName");
     }
   }
 });
 
-// サインインをリダイレクトで-----------------------------------------------------------
+// サインインをポップアップで-----------------------------------------------------------
 const Sign_In_google = async () => {
-  // ポップアップがブロックされる環境向けにリダイレクト方式を使う
+  const provider = new firebase.auth.GoogleAuthProvider();
   try {
-    await firebase
-      .auth()
-      .signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+    const result = await firebase.auth().signInWithPopup(provider);
+    // ポップアップでサインイン成功したら即時に表示更新しておく
+    if (result && result.user) {
+      const getDisplayName = (u) => {
+        if (!u) return "";
+        if (u.displayName && String(u.displayName).trim() !== "")
+          return String(u.displayName).trim();
+        if (u.email) return String(u.email).split("@")[0];
+        return "";
+      };
+      const name = getDisplayName(result.user);
+      input_userName(name);
+      localStorage.setItem("userName", name);
+      console.log(
+        "Popup sign-in successful:",
+        result.user.email || result.user.displayName
+      );
+    }
   } catch (err) {
-    console.error("signInWithRedirect error:", err);
+    // 広告ブロッカーやブラウザのポップアップブロックは無視
+    if (
+      (err && err.message && err.message.includes("ERR_BLOCKED_BY_CLIENT")) ||
+      (err && err.code && err.code === "auth/popup-blocked")
+    ) {
+      // ユーザーに侵入的なエラーは表示しない
+      console.warn("Popup blocked or blocked by client:", err);
+      return;
+    }
+    // ユーザーがポップアップを閉じたなどのエラーはログのみ
+    if (
+      err &&
+      err.code &&
+      (err.code === "auth/popup-closed-by-user" ||
+        err.code === "auth/cancelled-popup-request")
+    ) {
+      console.info("Popup sign-in cancelled or closed by user:", err.code);
+      return;
+    }
+    console.error("signInWithPopup error:", err);
     alert(
       "サインイン処理でエラーが発生しました。コンソールを確認してください。"
     );
   }
 };
 
-// リダイレクト結果の確認（エラー処理など）
-firebase
-  .auth()
-  .getRedirectResult()
-  .then((result) => {
-    if (result && result.user) {
-      // リダイレクトでサインイン成功
-      console.log("Redirect sign-in successful:", result.user.email);
-    }
-  })
-  .catch((error) => {
-    // Handle Errors here.
-    console.error("getRedirectResult error:", error);
-  });
+// ...existing code...
 
 // ログアウト----------------------------------------------
 document.getElementById("logout").addEventListener("click", () => {
@@ -54,6 +100,7 @@ document.getElementById("logout").addEventListener("click", () => {
     .then(() => {
       // サインアウト成功
       document.getElementById("logout").innerText = "ログイン";
+      localStorage.removeItem("userName");
     })
     .catch((error) => {
       console.error("signOut error:", error);
