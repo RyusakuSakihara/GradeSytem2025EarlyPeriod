@@ -10,15 +10,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCTub6eQdRh5KkRszrOZXFngoni3WQokm8",
-  authDomain: "grade-2025-early-period.firebaseapp.com",
-  projectId: "grade-2025-early-period",
-  storageBucket: "grade-2025-early-period.firebasestorage.app",
-  messagingSenderId: "873691192868",
-  appId: "1:873691192868:web:d2bf5d6df6b28ca62c82b1",
-};
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
