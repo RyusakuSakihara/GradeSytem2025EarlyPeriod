@@ -6,29 +6,13 @@
     <title>成績管理2024</title>
 
     <!-- login管理用 -->
-    <script
-      src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js"
-      defer
-    ></script>
-    <link
-      type="text/css"
-      rel="stylesheet"
-      href="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.css"
-    />
+    <script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js" defer></script>
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.css" />
 
     <!-- firebase動作用 -->
-    <script
-      src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"
-      defer
-    ></script>
-    <script
-      src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js"
-      defer
-    ></script>
-    <script
-      src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"
-      defer
-    ></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js" defer></script>
     <!-- キーの取得 -->
     <script src="js/00_getKey.js" defer></script>
     <!-- compat 初期化スクリプト（既存の名前空間 API を使うコードのため） -->
@@ -238,14 +222,7 @@
               <tr>
                 <th>No</th>
                 <th>名前</th>
-                <th>
-                  提出<input
-                    type="checkbox"
-                    name="checkAll"
-                    id="checkAll"
-                    checked
-                  />
-                </th>
+                <th>提出<input type="checkbox" name="checkAll" id="checkAll" checked /></th>
                 <th>日付<input type="date" name="dateAll" id="dateAll" /></th>
                 <th>
                   点数<select name="selectAll" id="selectAll">

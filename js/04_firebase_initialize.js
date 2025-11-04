@@ -3,12 +3,21 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebas
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
-import {
-  getFirestore,
-  doc,
-  getDoc,
-} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+
+const response = await fetch(__APIKEY_URL);
+const data = await response.json();
+const apiKey = data.apiKey;
+
+const firebaseConfig = {
+  apiKey: apiKey,
+  authDomain: "grade-2025-early-period.firebaseapp.com",
+  projectId: "grade-2025-early-period",
+  storageBucket: "grade-2025-early-period.firebasestorage.app",
+  messagingSenderId: "873691192868",
+  appId: "1:873691192868:web:d2bf5d6df6b28ca62c82b1",
+};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -32,6 +41,6 @@ const operationTest = async () => {
 };
 
 // 接続確認--------------------------------
-// operationTest();
+operationTest();
 
 export { Auth, firestore, app };
