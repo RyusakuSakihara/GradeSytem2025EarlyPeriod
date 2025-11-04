@@ -1,7 +1,18 @@
+const FireStoreApp = firebase.firestore();
+
+// 専⇒専攻科
+function major_rename(params) {
+  if (params == "専") {
+    return "専攻科";
+  } else {
+    return params;
+  }
+}
+
 // 学年からクラスをチョイス-------------------------------------------
 async function get_kulass_curriculum_filtered(params) {
   //その学年のクラスデータを取得
-  const filtered_klass = klass_curriculum_relation.filter((x) => x[3] == params);
+  const filtered_klass = klass_and_curriculum.filter((x) => x[3] == major_rename(params));
 
   // クラスの略称一覧を取得
   var klass_names = filtered_klass.map((x) => x[2]);
@@ -10,10 +21,10 @@ async function get_kulass_curriculum_filtered(params) {
   klass_choice_Button(klass_names);
 
   // 学年から学生氏名を取得
-  const target_students = await get_student_list(params);
+  // const target_students = await get_student_list(params);
 
   // 学年からカリキュラム一覧を取得
-  const target_curriculum = get_curriculum_list(params);
+  // const target_curriculum = get_curriculum_list(params);
 }
 
 // クラスデータからクラス選択ボタンを作成--------------------------------
@@ -24,7 +35,6 @@ function klass_choice_Button(klass_names) {
   attend_ul.innerHTML = "";
   third_ul.innerHTML = "";
 
-  //   console.log(klass_names);
   klass_names.forEach((element) => {
     let li = document.createElement("li");
     let a = document.createElement("a");
@@ -48,14 +58,29 @@ function klass_choice_Button(klass_names) {
 
 // クラス名一覧から学生データを取得----------------------------------
 async function get_student_list(grade) {
-  const Student_List = student_info;
+  const Student_List = student_list;
+
+  if (grade=="専") {
+    grade="専攻科"
+  }
+
   const target_students = Student_List.filter((x) => x[6] == grade);
+  
   return target_students;
 }
 
 // カリキュラム一覧を学年から取得-------------------------------------
 function get_curriculum_list(grade) {
-  return subject_relation_data.filter((x) => x[1] == grade);
+  var reply = [];
+  if (grade == "専") {
+    const temp = curriculum_relation_lsit.filter((x) => x[1] == "専攻科");
+    reply.push(temp);
+  } else {
+    const temp = curriculum_relation_lsit.filter((x) => x[1] == grade);
+    reply.push(temp);
+  }
+  // console.log(reply[0]);
+  return reply[0];
 }
 //
 // GPAの表に学生氏名を登録--------------------------------------------
@@ -177,3 +202,25 @@ window.onload = () => {
 
   document.querySelector(".naviAnime7").addEventListener("click", seventhSection_click);
 };
+
+// クラス名と科目名、作業からコレクション名とドキュメント名を作成する
+function getDocumentID(task, klass, subject) {
+  // const task_name = "3.授業態度";
+  // const klass_name = "1A";
+  // const subject_name = "政治Ⅰ";
+
+  const task_name = task;
+  const klass_name = klass;
+  const subject_name = subject;
+
+  const task_array = apply_collect_relation.filter((x) => x[0] == task_name)[0];
+  const grade_array = klass_and_curriculum.filter((x) => x[2] == klass_name)[0];
+
+  const subject_array = curriculum_relation_lsit.filter((x) => x[1] == grade_array[3]);
+  const subject_number = subject_array.filter((x) => x[3] == subject_name)[0];
+
+  const document_id = subject_number[0] + grade_array[0];
+  // console.log(document_id);
+
+  return [task_array, document_id];
+}

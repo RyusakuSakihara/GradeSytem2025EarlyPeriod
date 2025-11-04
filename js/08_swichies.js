@@ -27,6 +27,7 @@ for (let index = 0; index < localStrageLength; index++) {
 function click_gradesButton(e) {
   // 選択した学年
   const selectedGrade = e.target.innerText;
+
   // 学年を保存
   document.getElementById("gradeText").value = selectedGrade;
   // 選択した学年を表示

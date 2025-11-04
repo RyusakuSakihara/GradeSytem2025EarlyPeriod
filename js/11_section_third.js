@@ -76,6 +76,7 @@ function selectedSubject(element) {
 
   // クラス選択ボタン
   const klass_button = document.querySelectorAll(".thirdSection .klassName");
+
   klass_button.forEach((element) => element.addEventListener("click", create_inputed_list));
   klass_button[0].focus();
   klass_button[0].click();
@@ -153,6 +154,9 @@ async function create_inputed_list(e) {
 
 // 新規追加を押すと--------------------------------------------------------------------
 async function newAddition() {
+  // フィールドのリセット
+  document.getElementById("field_id").value = "";
+
   // テーブルをリセットする
   input_table_row_reset();
 
@@ -169,7 +173,7 @@ async function newAddition() {
   header_input_all();
 
   // 授業のタイトルをフォーカス
-  document.querySelector(".subjectTitle").focus();
+  document.querySelector(".regist").focus();
 }
 
 // 新規追加の表示の変更
@@ -203,7 +207,8 @@ function editTitle_setting() {
 async function input_table_create() {
   // 対象クラスを取得
   const Selected_Klass = document.getElementById("Selected_Klass").value;
-
+  // console.log(Selected_Klass);
+  
   // 学年を取得
   const grade = document.querySelector(".displayButton").innerText;
   // console.log(grade);
@@ -365,6 +370,7 @@ function input_table_row_reset() {
 function regist_button_click() {
   // テーブルのデータを取得する
   get_input_datas();
+  document.querySelector(".return").focus();
 }
 
 // テーブルのデータを取得する
@@ -373,6 +379,7 @@ async function get_input_datas() {
   const Appli = document.getElementById("selectedAppli").value;
   const Subject = document.getElementById("targetSubject").value;
   const Klass = document.getElementById("Selected_Klass").value;
+  const field = document.getElementById("field_id").value;
 
   // 授業内容を取得
   const subject_title = document.querySelector(".subjectTitle").value;
@@ -393,7 +400,96 @@ async function get_input_datas() {
   };
 
   // firebase に保存
-  await set_firestore(Send_Data, Appli, Subject, Klass);
+  // await set_firestore(Send_Data, Appli, Subject, Klass);
+  await set_firestore2(Send_Data, Appli, Subject, Klass);
+}
+
+// 保存ボタンを押したら
+async function set_firestore2(Send_Data, appli, subject, klass) {
+  // firebaseのID確認
+  const document_id = getDocumentID(appli, klass, subject);
+
+  const collection_path = document_id[0][1];
+  const Total_Collection = collection_path + "_Total";
+
+  const check_id = await FireStoreApp.collection(collection_path).doc(document_id[1]).get();
+  const total_data = await FireStoreApp.collection(Total_Collection).doc(document_id[1]).get();
+
+  const total_data_obj = total_data.data();
+  // console.log(check_id.exists);
+
+  const field_id = document.getElementById("field_id");
+
+  // documentIDが存在しなかったとき
+  if (!check_id.exists) {
+    const collection_path = document_id[0][1];
+    const first_field = collection_path[0] + 0;
+    field_id.value = first_field;
+    const input_data = {
+      [first_field]: JSON.stringify(Send_Data),
+    };
+
+    // 集計用のデータ作成
+    const Send_Total = Edit_Total_db(Send_Data);
+    const input_total = {
+      [first_field]: JSON.stringify(Send_Total),
+    };
+    const Total_Collection = collection_path + "_Total";
+
+    // firebaseへの新規登録
+    await FireStoreApp.collection(collection_path).doc(document_id[1]).set(input_data);
+    await FireStoreApp.collection(Total_Collection).doc(document_id[1]).set(input_total);
+  } else {
+    // console.log("更新");
+
+    // 更新するとき
+    if (field_id.value.length > 0) {
+      const target_data = check_id.data();
+
+      // 更新
+      target_data[field_id.value] = JSON.stringify(Send_Data);
+      // console.log(check_id);
+
+      // 集計用のデータ作成
+      const Send_Total = Edit_Total_db(Send_Data);
+
+      total_data_obj[field_id.value] = JSON.stringify(Send_Total);
+
+      await FireStoreApp.collection(collection_path).doc(document_id[1]).set(target_data, { marge: true });
+      await FireStoreApp.collection(Total_Collection).doc(document_id[1]).set(total_data_obj, { marge: true });
+    } else {
+      var target_field = "";
+      const target_data = check_id.data();
+
+      // 追加用のフィールドの確認
+      for (var i = 0; i < 20; i++) {
+        var field_check = collection_path[0] + i;
+        if (!(field_check in target_data)) {
+          target_field = field_check;
+          break;
+        }
+      }
+
+      target_data[target_field] = JSON.stringify(Send_Data);
+      console.log(target_data);
+
+      // 集計用のデータ作成
+
+      const Send_Total = Edit_Total_db(Send_Data);
+
+      total_data_obj[target_field] = JSON.stringify(Send_Total);
+      console.log(total_data_obj);
+
+      console.log("追加");
+
+      await FireStoreApp.collection(collection_path).doc(document_id[1]).set(target_data, { marge: true });
+      await FireStoreApp.collection(Total_Collection).doc(document_id[1]).set(total_data_obj, { marge: true });
+
+      document.getElementById("field_id").value = target_field;
+    }
+  }
+
+  window.alert("保存しました。");
 }
 
 // テーブルから学生の状態を取得する
@@ -436,9 +532,12 @@ async function set_firestore(Send_Data, Appli, Subject, Klass) {
   // idを確認する
   const firebase_ID = document.getElementById("firebase_ID").value;
 
+  // field id
+  const field_id = document.getElementById("field_id").value;
+
   if (firebase_ID.length > 0) {
     // 保存されているか確認をする
-    const check_boolean = await check_firestore(Collection_Name[0], Subject, Klass, firebase_ID);
+    const check_boolean = await check_firestore(Collection_Name[0], firebase_ID, field_id);
 
     if (check_boolean) {
       var result = window.confirm("再度保存しますか。");
@@ -497,8 +596,9 @@ async function set_firestore(Send_Data, Appli, Subject, Klass) {
 }
 
 // firestoreにあるか確認する
-async function check_firestore(Appli, Subject, Klass, firebase_ID) {
-  const target_data = await FirestoreApp.collection(Appli).doc(Subject).collection(Klass).doc(firebase_ID).get();
+async function check_firestore(Appli, firebase_ID, field_id) {
+  const target_data = await FirestoreApp.collection(Appli).doc(firebase_ID).get();
+  console.log(target_data);
   return target_data.exists;
 }
 
@@ -508,32 +608,53 @@ async function inputed_data_check() {
   const selectedAppli = document.getElementById("selectedAppli").value;
   const targetSubject = document.getElementById("targetSubject").value;
   const Selected_Klass = document.getElementById("Selected_Klass").value;
+  // console.log(selectedAppli);
+  // console.log(targetSubject);
+  // console.log(Selected_Klass);
 
   // 作業内容
   const Collection_Name = apply_collect_relation.filter((x) => x[0] == selectedAppli).map((x) => x[1]);
 
   // 必要なIDを取得する
-  var Send_Data = [];
-  const target_datas = await FirestoreApp.collection(Collection_Name[0]).doc(targetSubject).collection(Selected_Klass).get();
+  const document_id = getDocumentID(selectedAppli, Selected_Klass, targetSubject);
+  // console.log(document_id);
+  
+  const collection_path = document_id[0][1];
+  const document_path = document_id[1];
 
-  if (target_datas.empty) {
+  var Send_Data = [];
+
+  const target_datas = await FireStoreApp.collection(collection_path).doc(document_path).get();
+  // console.log(target_datas.exists);
+
+  if (!target_datas.exists) {
     // データが無いとき
-    window.alert("データがありません。");
+    window.alert("データがありません。新規作成してください。");
+    const newAddition_btn = document.querySelector(".thirdSection .newAddition");
+    newAddition_btn.childNodes[1].focus();
+    // console.log(newAddition_btn.childNodes[1]);
   } else {
     // データがあるとき
-    target_datas.forEach((element) => {
-      var index = 0;
-      Send_Data.push([
-        index,
-        element.id,
-        element.data().subject_title,
-        new Date(element.data().subject_Date),
-        JSON.parse(element.data().student_data),
-      ]);
-      index++;
-    });
+    const target_data = target_datas.data();
+
+    for (var i = 0; i < 10; i++) {
+      const field_id = collection_path[0] + i;
+
+      if (field_id in target_data) {
+        const edit_data = JSON.parse(target_data[field_id]);
+        // console.log(edit_data);
+        Send_Data.push([
+          field_id,
+          target_datas.id,
+          edit_data.subject_title,
+          new Date(edit_data.subject_Date),
+          JSON.parse(edit_data.student_data),
+        ]);
+      }
+    }
   }
 
+  // console.log(Send_Data);
   return Send_Data;
 }
 
@@ -541,6 +662,7 @@ async function inputed_data_check() {
 function Edit_list_data(data) {
   // 日付の遅い順に並べ替え
   const sorted_data = data.sort((a, b) => b[3] - a[3]);
+  // console.log(data);
 
   // テーブルに入れられるよう加工する
   var Send_Data = [];
@@ -552,7 +674,7 @@ function Edit_list_data(data) {
 
     if (index == 0) {
       // [No、名前、[ID、タイトル、日付]]
-      Send_Data.push(["No", "名前", [element[1], element[2], Month + "/" + Day]]);
+      Send_Data.push(["No", "名前", [element[1], element[2], Month + "/" + Day, element[0]]]);
 
       // [C番号、[学籍番号、名前]、点数]
       element[4].forEach((item, num) => {
@@ -560,7 +682,7 @@ function Edit_list_data(data) {
       });
     } else {
       // [ID、タイトル、日付]
-      Send_Data[0].push([element[1], element[2], Month + "/" + Day]);
+      Send_Data[0].push([element[1], element[2], Month + "/" + Day, element[0]]);
 
       // [点数]
       element[4].forEach((item, num) => {
@@ -589,7 +711,8 @@ function list_table_create(Edited_data) {
           a.classList = "edit_link";
           a.href = "#";
           a.innerHTML = `${item[1].substring(0, 4)}<br>${item[2]}
-                        <input type="text" value=${item[0]} hidden />
+                        <input type="text" value=${item[0]} hidden/>
+                        <input type = "text" class="field_id" value=${item[3]} hidden/>
                         <div class="balloon"><p>${item[1]}</p></div>`;
           th.appendChild(a);
           tr.appendChild(th);
@@ -625,6 +748,9 @@ function list_table_create(Edited_data) {
 
 // edit_link をクリックして編集画面を表示する---------------------------------------
 async function edit_link(e) {
+  const field_id = e.target.childNodes[5].value;
+  // console.log(e.target.childNodes[5].value);
+
   // 編集ターゲットのID
   const target_ID = e.target.querySelector("input").value;
 
@@ -642,15 +768,15 @@ async function edit_link(e) {
   //新規作成と同じ動き
   newAddition();
 
-  // firebase からデータを拾ってくる
-  var edit_target_data = await FirestoreApp.collection(Collection_Name[0])
-    .doc(targetSubject)
-    .collection(Selected_Klass)
-    .doc(target_ID)
-    .get();
+  // field id も保存しておく
+  document.getElementById("field_id").value = field_id;
+  console.log(field_id);
 
-  // console.log(edit_target_data.data());
-  input_table_edit(edit_target_data.data());
+  // firebase からデータを拾ってくる
+  var edit_target_data = await FireStoreApp.collection(Collection_Name[0]).doc(target_ID).get();
+
+  // console.log(JSON.parse(edit_target_data.data()[field_id]));
+  input_table_edit(JSON.parse(edit_target_data.data()[field_id]));
 }
 
 // 編集データを表などにいれていくぅ
@@ -712,6 +838,7 @@ async function Delete_button_click(e) {
   const selectedAppli = document.getElementById("selectedAppli").value;
   const targetSubject = document.getElementById("targetSubject").value;
   const Selected_Klass = document.getElementById("Selected_Klass").value;
+  const field_id = document.getElementById("field_id").value;
 
   // CollectionNameを取得する
   const Collection_Name = apply_collect_relation.filter((x) => x[0] == selectedAppli).map((x) => x[1])[0];
@@ -721,14 +848,17 @@ async function Delete_button_click(e) {
   if (result) {
     if (target_ID.length > 0) {
       // 管理用の削除
-      await FirestoreApp.collection(Collection_Name).doc(targetSubject).collection(Selected_Klass).doc(target_ID).delete();
+      const target_obj = await FireStoreApp.collection(Collection_Name).doc(target_ID).get();
+      const target_data = target_obj.data();
+      delete target_data[field_id];
+      await FireStoreApp.collection(Collection_Name).doc(target_ID).set(target_data);
 
       // 集計用の削除
-      await FirestoreApp.collection(Collection_Name + "_Total")
-        .doc(targetSubject)
-        .collection(Selected_Klass)
-        .doc(target_ID)
-        .delete();
+      const collection_path = Collection_Name + "_Total";
+      const total_obj = await FireStoreApp.collection(collection_path).doc(target_ID).get();
+      const total_data = total_obj.data();
+      delete total_data[field_id];
+      await FireStoreApp.collection(collection_path).doc(target_ID).set(total_data);
     }
     // リスト一覧に戻る
     return_button_push();

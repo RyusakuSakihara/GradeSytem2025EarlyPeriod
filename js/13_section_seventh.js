@@ -77,25 +77,32 @@ function selectedSubject_seventh(element) {
   GPA_total_data(element.target.innerText);
 }
 
+async function get_GPA_Allocation() {
+  const GPA_obj = await FireStoreApp.collection("GPA_Allocation").doc("GPA_Allocation").get();
+  return [JSON.parse(GPA_obj.data().Allocation), JSON.parse(GPA_obj.data().Rateing)];
+}
+
 // firebaseから科目のデータを取ってくる
 async function GPA_total_data(element) {
   // 学年
-  const grade = document.querySelector(".displayButton").innerHTML;
+  var grade = document.querySelector(".displayButton").innerHTML;
 
   // 科目名
   const subject_name = element;
 
-  // クラスとカリキュラムの取得
-  const klass_and_curriculum = klass_curriculum_relation;
+  if (grade == "専") {
+    grade = "専攻科";
+  }
 
   // 対象のクラス一覧を取得
   const klass_list = klass_and_curriculum.filter((x) => x[3] == grade).map((x) => x[2]);
 
   // GPA配点データの取得
-  const Allocation = await Get_GPA_Allocation();
+  const Allocation = await get_GPA_Allocation();
+
   const Allocate_point = Allocation[0].filter((x) => x.Allocate_Name == element);
   const Allocate_rate = Allocation[1];
-  // console.log(Allocate_rate);
+  console.log(Allocate_point);
 
   // 操作とコレクション名の取得（態度、課題、ミニテスト）
   const apply_and_collect = apply_collect_relation;
@@ -110,15 +117,15 @@ async function GPA_total_data(element) {
   // console.log(Student_List);
 
   // 授業態度の取得
-  const attitude_datas = await get_attitude_datas(subject_name, klass_list, Student_List);
+  const attitude_datas = await get_firestore_datas(subject_name, klass_list, Student_List, "Attitude");
   // console.log(attitude_datas);
 
   // 課題点の取得
-  const task_datas = await get_task_datas(subject_name, klass_list, Student_List);
+  const task_datas = await get_firestore_datas(subject_name, klass_list, Student_List, "Task");
   // console.log(task_datas);
 
   // ミニテストの取得
-  const minitest_datas = await get_minitest_datas(subject_name, klass_list, Student_List);
+  const minitest_datas = await get_firestore_datas(subject_name, klass_list, Student_List, "MiniTest");
   // console.log(minitest_datas);
 
   // 評価テストの取得（模試や週テスト）
@@ -146,15 +153,15 @@ async function get_attend_datas(subject_name, klass_list) {
   var Send_Data = [];
 
   // 専攻科の名前の部分を補正
-  if (klass_list[0] == "専") {
-    klass_list[0] = "専攻科";
-  }
+  // if (klass_list[0] == "専") {
+  //   klass_list[0] = "専攻科";
+  // }
 
   // クラスの数だけ回す
   for (let index = 0; index < klass_list.length; index++) {
-    const attend_datas = await FirestoreApp.collection("Attend_Datas").doc(subject_name).collection("klasses").doc(klass_list[index]).get();
-
-    // console.log(attend_datas);
+    const document_id = getDocumentID("3.授業態度", klass_list[index], subject_name);
+    const target_doc = document_id[1];
+    const attend_datas = await FireStoreApp.collection("Attend_Datas").doc(target_doc).get();
 
     if (attend_datas.exists) {
       Send_Data.push(JSON.parse(attend_datas.data().Attend_Rate));
@@ -164,14 +171,16 @@ async function get_attend_datas(subject_name, klass_list) {
     }
   }
 
+  // console.log(Send_Data);
   return Send_Data;
 }
 
-// 態度点の取得
-async function get_attitude_datas(subject_name, klass_list, Student_List) {
+// 態度点・課題点・ミニテスト点の取得
+async function get_firestore_datas(subject_name, klass_list, Student_List, appli_name) {
   // 返送用の配列
   var Send_Data = Student_List.map((x) => [0, 0, x, 0, 0]);
 
+  // クラス配列からそれぞれ取得
   for (let index = 0; index < klass_list.length; index++) {
     let element = klass_list[index];
 
@@ -179,87 +188,35 @@ async function get_attitude_datas(subject_name, klass_list, Student_List) {
       element = "専";
     }
 
-    // console.log(element);
+    // 態度、課題、ミニテストの判定
+    const appli_string = apply_collect_relation.filter((x) => x[1] == appli_name);
 
-    const attitude_datas = await FirestoreApp.collection("Attitude_Total").doc(subject_name).collection(element).get();
+    // ドキュメントIDの取得
+    const document_id = getDocumentID(appli_string[0], element, subject_name);
+    const target_doc = document_id[1];
 
-    // console.log(attitude_datas);
+    // コレクション名の作成
+    const collection_path = appli_name + "_Total";
 
-    // データの有無を調べる
-    if (!attitude_datas.empty) {
-      attitude_datas.docs.forEach((element, index) => {
-        const target_array = JSON.parse(element.data().Send_Total);
+    // データの取得
+    const firestore_datas = await FireStoreApp.collection(collection_path).doc(target_doc).get();
+    const target_obj = firestore_datas.data();
 
-        Student_List.forEach((name, jindex) => {
-          const target_student = target_array.filter((x) => x[2] == name);
-
-          if (target_student.length > 0) {
-            Send_Data[jindex][0] = target_student[0][0];
-            Send_Data[jindex][1] = target_student[0][1];
-            Send_Data[jindex][3] = target_student[0][3] + Send_Data[jindex][3];
-            Send_Data[jindex][4] = target_student[0][4] + Send_Data[jindex][4];
-          }
-        });
-      });
-    }
-  }
-
-  return Send_Data;
-}
-
-// 態度点の取得
-async function get_task_datas(subject_name, klass_list, Student_List) {
-  // 返送用の配列
-  var Send_Data = Student_List.map((x) => [0, 0, x, 0, 0]);
-
-  for (let index = 0; index < klass_list.length; index++) {
-    let element = klass_list[index];
-
-    if (element == "専攻科") {
-      element = "専";
-    }
-
-    const task_datas = await FirestoreApp.collection("Task_Total").doc(subject_name).collection(element).get();
+    var field_array = [];
 
     // データの有無を調べる
-    if (!task_datas.empty) {
-      task_datas.docs.forEach((element, index) => {
-        const target_array = JSON.parse(element.data().Send_Total);
+    if (firestore_datas.exists) {
+      // フィールドの確認
+      for (var i = 0; i < 20; i++) {
+        var field_check = collection_path[0] + i;
+        if (field_check in target_obj) {
+          field_array.push(field_check);
+        }
+      }
 
-        Student_List.forEach((name, jindex) => {
-          const target_student = target_array.filter((x) => x[2] == name);
-
-          if (target_student.length > 0) {
-            Send_Data[jindex][0] = target_student[0][0];
-            Send_Data[jindex][1] = target_student[0][1];
-            Send_Data[jindex][3] = target_student[0][3] + Send_Data[jindex][3];
-            Send_Data[jindex][4] = target_student[0][4] + Send_Data[jindex][4];
-          }
-        });
-      });
-    }
-  }
-
-  return Send_Data;
-}
-// ミニテストの取得
-async function get_minitest_datas(subject_name, klass_list, Student_List) {
-  // 返送用の配列
-  var Send_Data = Student_List.map((x) => [0, 0, x, 0, 0]);
-
-  for (let index = 0; index < klass_list.length; index++) {
-    let element = klass_list[index];
-
-    if (element == "専攻科") {
-      element = "専";
-    }
-
-    const minitest_datas = await FirestoreApp.collection("MiniTest_Total").doc(subject_name).collection(element).get();
-
-    // データの有無を調べる
-    if (!minitest_datas.empty) {
-      minitest_datas.docs.forEach((element, index) => {
-        const target_array = JSON.parse(element.data().Send_Total);
+      // フィールドにあるデータをそれぞれ処理
+      field_array.forEach((element, index) => {
+        const target_array = JSON.parse(target_obj[element]);
 
         Student_List.forEach((name, jindex) => {
           const target_student = target_array.filter((x) => x[2] == name);
@@ -283,6 +240,11 @@ async function get_evaluate_test(subject_name, klass_list, Student_List, grade) 
   // console.log(relation_evaluate_list);
   // console.log(subject_name);
   // console.log(grade);
+
+  if (grade == "専攻科") {
+    grade = "専";
+  }
+
   const target_doc_name = relation_evaluate_list.filter((x) => x[0] == grade)[0][1];
   // console.log(subject_name);
 
@@ -322,7 +284,7 @@ async function get_evaluate_test(subject_name, klass_list, Student_List, grade) 
 // 科目名から得点率を絞り込む---------------------------------------------------
 function checkSubjectFilter(oneData, subjectName) {
   // カリキュラム科目名から模試科目名にする
-  const examTextName = subject_relation_data.filter((x) => x[3] == subjectName);
+  const examTextName = curriculum_relation_lsit.filter((x) => x[3] == subjectName);
   // console.log(examTextName[0][6]);
 
   // 科目で絞り込む
@@ -524,6 +486,7 @@ function take_evaluate_point(Allocate_point, Allocate_rate, target_datas, studen
     Allocate_rate.forEach((item, index) => {
       if (item < target_rate) {
         temp_point = Allocate_point[index];
+        // console.log(temp_point);
       }
     });
 
@@ -583,19 +546,30 @@ function reserve_GPA(GPA_datas) {
 
   const main_data = GPA_datas.map((x) => [x[0], x[1], x[13], x[14]]);
 
-  const grade = document.getElementById("gradeText").value;
+  var grade = document.querySelector(".displayButton").innerText;
   const subject_name = document.getElementById("targetSubject").value;
   const klass_term = document.getElementById("term_count").value;
 
+  if (grade == "専") {
+    grade = "専攻科";
+  }
+
+  // 科目番号の取得
+  const subject_number = curriculum_relation_lsit.filter((x) => x[1] == grade).filter((x) => x[3] == subject_name)[0][0];
+  console.log(subject_number);
+
+  // 送信用のデータの作成
   const reserve_data = {
     subject_name: subject_name,
     klass_term: klass_term,
     main_data: JSON.stringify(main_data),
+    subject_number: subject_number,
+    grade: grade,
   };
 
   if (klass_term > 0) {
-    FirestoreApp.collection("GPA_Subject_Data")
-      .doc(subject_name)
+    FireStoreApp.collection("GPA_Subject_Data")
+      .doc(subject_number)
       .set(reserve_data)
       .then(() => {
         console.log("subject_GPA_reserved");
