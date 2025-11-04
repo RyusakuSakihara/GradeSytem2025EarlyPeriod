@@ -102,6 +102,7 @@ function exam_table_create(target_data) {
   // console.log([row_number, col_number]);
 
   const target_table = document.querySelector(".evaluateTable table tbody");
+  target_table.innerHTML = "";
 
   // 単純に表を作成する
   for (let index = 0; index < row_number; index++) {
