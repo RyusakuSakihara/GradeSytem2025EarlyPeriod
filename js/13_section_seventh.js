@@ -4,7 +4,9 @@ function seventhSection_click(e) {
   all_section_hidden();
 
   // 表示
-  const seventhSection = document.querySelectorAll("section.seventhSection .wrapper");
+  const seventhSection = document.querySelectorAll(
+    "section.seventhSection .wrapper"
+  );
   document.querySelector("section.seventhSection").style.display = "block";
   seventhSection[0].style.display = "block";
   seventhSection[1].style.display = "none";
@@ -39,15 +41,19 @@ function create_subject_selector_GPA() {
 
       const li = document.createElement("li");
 
-      li.innerHTML = `<a href="#" class="subjectName subjectAnime${index + 1}">${item}</a>`;
+      li.innerHTML = `<a href="#" class="subjectName subjectAnime${
+        index + 1
+      }">${item}</a>`;
 
       subject_select_ul.appendChild(li);
     });
 
   // 科目を選択すると
-  document.querySelectorAll(".seventhSection .subjectName").forEach((element) => {
-    element.addEventListener("click", selectedSubject_seventh);
-  });
+  document
+    .querySelectorAll(".seventhSection .subjectName")
+    .forEach((element) => {
+      element.addEventListener("click", selectedSubject_seventh);
+    });
 }
 
 // 最初のボタンをフォーカス------------------------------------------
@@ -62,24 +68,34 @@ function selectedSubject_seventh(element) {
   document.getElementById("targetSubject").value = element.target.innerText;
 
   // 科目ボタンを非表示
-  document.querySelectorAll("section.seventhSection .wrapper")[0].style.display = "none";
+  document.querySelectorAll(
+    "section.seventhSection .wrapper"
+  )[0].style.display = "none";
 
   // 表タイトルを表示
-  document.querySelectorAll("section.seventhSection .wrapper")[1].style.display = "block";
+  document.querySelectorAll(
+    "section.seventhSection .wrapper"
+  )[1].style.display = "block";
 
   // 表を非表示
   document.querySelector("section.seventhSection table").style.display = "none";
 
   // タイトルに科目名をつける
-  document.querySelector(".seventhSection .wrapper h1").innerText = "科目別集計（" + element.target.innerText + "）";
+  document.querySelector(".seventhSection .wrapper h1").innerText =
+    "科目別集計（" + element.target.innerText + "）";
 
   // firebaseから科目のデータを取ってくる
   GPA_total_data(element.target.innerText);
 }
 
 async function get_GPA_Allocation() {
-  const GPA_obj = await FireStoreApp.collection("GPA_Allocation").doc("GPA_Allocation").get();
-  return [JSON.parse(GPA_obj.data().Allocation), JSON.parse(GPA_obj.data().Rateing)];
+  const GPA_obj = await FireStoreApp.collection("GPA_Allocation")
+    .doc("GPA_Allocation")
+    .get();
+  return [
+    JSON.parse(GPA_obj.data().Allocation),
+    JSON.parse(GPA_obj.data().Rateing),
+  ];
 }
 
 // firebaseから科目のデータを取ってくる
@@ -95,12 +111,16 @@ async function GPA_total_data(element) {
   }
 
   // 対象のクラス一覧を取得
-  const klass_list = klass_and_curriculum.filter((x) => x[3] == grade).map((x) => x[2]);
+  const klass_list = klass_and_curriculum
+    .filter((x) => x[3] == grade)
+    .map((x) => x[2]);
 
   // GPA配点データの取得
   const Allocation = await get_GPA_Allocation();
 
-  const Allocate_point = Allocation[0].filter((x) => x.Allocate_Name == element);
+  const Allocate_point = Allocation[0].filter(
+    (x) => x.Allocate_Name == element
+  );
   const Allocate_rate = Allocation[1];
   console.log(Allocate_point);
 
@@ -113,23 +133,45 @@ async function GPA_total_data(element) {
 
   // 名前一覧の取得
   var Student_List = [];
-  attend_datas.map((x) => x.map((y) => y[1])).map((x) => x.map((y) => Student_List.push(y)));
+  attend_datas
+    .map((x) => x.map((y) => y[1]))
+    .map((x) => x.map((y) => Student_List.push(y)));
   // console.log(Student_List);
 
   // 授業態度の取得
-  const attitude_datas = await get_firestore_datas(subject_name, klass_list, Student_List, "Attitude");
+  const attitude_datas = await get_firestore_datas(
+    subject_name,
+    klass_list,
+    Student_List,
+    "Attitude"
+  );
   // console.log(attitude_datas);
 
   // 課題点の取得
-  const task_datas = await get_firestore_datas(subject_name, klass_list, Student_List, "Task");
+  const task_datas = await get_firestore_datas(
+    subject_name,
+    klass_list,
+    Student_List,
+    "Task"
+  );
   // console.log(task_datas);
 
   // ミニテストの取得
-  const minitest_datas = await get_firestore_datas(subject_name, klass_list, Student_List, "MiniTest");
+  const minitest_datas = await get_firestore_datas(
+    subject_name,
+    klass_list,
+    Student_List,
+    "MiniTest"
+  );
   // console.log(minitest_datas);
 
   // 評価テストの取得（模試や週テスト）
-  const evaluate_test_data = await get_evaluate_test(subject_name, klass_list, Student_List, grade);
+  const evaluate_test_data = await get_evaluate_test(
+    subject_name,
+    klass_list,
+    Student_List,
+    grade
+  );
   // console.log(evaluate_test_data);
 
   // データをまとめて一つの配列にする
@@ -159,15 +201,22 @@ async function get_attend_datas(subject_name, klass_list) {
 
   // クラスの数だけ回す
   for (let index = 0; index < klass_list.length; index++) {
-    const document_id = getDocumentID("3.授業態度", klass_list[index], subject_name);
+    const document_id = getDocumentID(
+      "3.授業態度",
+      klass_list[index],
+      subject_name
+    );
     const target_doc = document_id[1];
-    const attend_datas = await FireStoreApp.collection("Attend_Datas").doc(target_doc).get();
+    const attend_datas = await FireStoreApp.collection("Attend_Datas")
+      .doc(target_doc)
+      .get();
 
     if (attend_datas.exists) {
       Send_Data.push(JSON.parse(attend_datas.data().Attend_Rate));
 
       // 授業時間数を一時的に保存する
-      document.getElementById("term_count").value = attend_datas.data().Execute_Number;
+      document.getElementById("term_count").value =
+        attend_datas.data().Execute_Number;
     }
   }
 
@@ -176,7 +225,12 @@ async function get_attend_datas(subject_name, klass_list) {
 }
 
 // 態度点・課題点・ミニテスト点の取得
-async function get_firestore_datas(subject_name, klass_list, Student_List, appli_name) {
+async function get_firestore_datas(
+  subject_name,
+  klass_list,
+  Student_List,
+  appli_name
+) {
   // 返送用の配列
   var Send_Data = Student_List.map((x) => [0, 0, x, 0, 0]);
 
@@ -189,7 +243,9 @@ async function get_firestore_datas(subject_name, klass_list, Student_List, appli
     }
 
     // 態度、課題、ミニテストの判定
-    const appli_string = apply_collect_relation.filter((x) => x[1] == appli_name);
+    const appli_string = apply_collect_relation.filter(
+      (x) => x[1] == appli_name
+    );
 
     // ドキュメントIDの取得
     const document_id = getDocumentID(appli_string[0], element, subject_name);
@@ -199,7 +255,9 @@ async function get_firestore_datas(subject_name, klass_list, Student_List, appli
     const collection_path = appli_name + "_Total";
 
     // データの取得
-    const firestore_datas = await FireStoreApp.collection(collection_path).doc(target_doc).get();
+    const firestore_datas = await FireStoreApp.collection(collection_path)
+      .doc(target_doc)
+      .get();
     const target_obj = firestore_datas.data();
 
     var field_array = [];
@@ -231,12 +289,18 @@ async function get_firestore_datas(subject_name, klass_list, Student_List, appli
       });
     }
   }
+  // console.log(Send_Data);
 
   return Send_Data;
 }
 
 // 模試や週テストの取得☆彡☆彡☆彡☆彡☆彡☆彡☆彡☆彡☆彡☆彡☆彡
-async function get_evaluate_test(subject_name, klass_list, Student_List, grade) {
+async function get_evaluate_test(
+  subject_name,
+  klass_list,
+  Student_List,
+  grade
+) {
   // console.log(relation_evaluate_list);
   // console.log(subject_name);
   // console.log(grade);
@@ -245,7 +309,9 @@ async function get_evaluate_test(subject_name, klass_list, Student_List, grade) 
     grade = "専";
   }
 
-  const target_doc_name = relation_evaluate_list.filter((x) => x[0] == grade)[0][1];
+  const target_doc_name = relation_evaluate_list.filter(
+    (x) => x[0] == grade
+  )[0][1];
   // console.log(subject_name);
 
   // 評価テストのデータの取得
@@ -284,8 +350,11 @@ async function get_evaluate_test(subject_name, klass_list, Student_List, grade) 
 // 科目名から得点率を絞り込む---------------------------------------------------
 function checkSubjectFilter(oneData, subjectName) {
   // カリキュラム科目名から模試科目名にする
-  const examTextName = curriculum_relation_lsit.filter((x) => x[3] == subjectName);
+  const examTextName = curriculum_relation_lsit.filter(
+    (x) => x[3] == subjectName
+  );
   // console.log(examTextName[0][6]);
+  // console.log(oneData.filter((x) => x[0] == examTextName[0][6]));
 
   // 科目で絞り込む
   let replyData = 0;
@@ -342,19 +411,39 @@ async function integration_datas(
     temp_array.push(item);
 
     // 出席率データ
-    const Attend_Points = take_attend_point(Allocate_point, Allocate_rate, attend_datas, item);
+    const Attend_Points = take_attend_point(
+      Allocate_point,
+      Allocate_rate,
+      attend_datas,
+      item
+    );
     Attend_Points.map((x) => temp_array.push(x));
 
     // 態度点の取得
-    const Attitude_Points = take_input_point(Allocate_point[0].Attitude_Points, Allocate_rate.Attitude_Points, attitude_datas, item);
+    const Attitude_Points = take_input_point(
+      Allocate_point[0].Attitude_Points,
+      Allocate_rate.Attitude_Points,
+      attitude_datas,
+      item
+    );
     Attitude_Points.map((x) => temp_array.push(x));
 
     // 課題点の取得
-    const Task_Points = take_input_point(Allocate_point[0].Task_Points, Allocate_rate.Task_Points, task_datas, item);
+    const Task_Points = take_input_point(
+      Allocate_point[0].Task_Points,
+      Allocate_rate.Task_Points,
+      task_datas,
+      item
+    );
     Task_Points.map((x) => temp_array.push(x));
 
     // ミニテスト点の取得
-    const Minitest_Points = take_input_point(Allocate_point[0].Mini_Test_Points, Allocate_rate.Mini_Test_Points, minitest_datas, item);
+    const Minitest_Points = take_input_point(
+      Allocate_point[0].Mini_Test_Points,
+      Allocate_rate.Mini_Test_Points,
+      minitest_datas,
+      item
+    );
     Minitest_Points.map((x) => temp_array.push(x));
 
     // 評価テスト
@@ -367,7 +456,12 @@ async function integration_datas(
     Evaluation_Points.map((x) => temp_array.push(x));
 
     // 合計点
-    const summation_point = Attend_Points[1] + Attitude_Points[1] + Task_Points[1] + Minitest_Points[1] + Evaluation_Points[1];
+    const summation_point =
+      Attend_Points[1] +
+      Attitude_Points[1] +
+      Task_Points[1] +
+      Minitest_Points[1] +
+      Evaluation_Points[1];
     temp_array.push(summation_point);
 
     // 優良可を決める
@@ -407,7 +501,12 @@ async function integration_datas(
 }
 
 // 出席率の取り出し
-function take_attend_point(Allocate_point, Allocate_rate, attend_datas, student) {
+function take_attend_point(
+  Allocate_point,
+  Allocate_rate,
+  attend_datas,
+  student
+) {
   // 出席データを入れる箱
   var Attend_Points = [];
 
@@ -435,7 +534,12 @@ function take_attend_point(Allocate_point, Allocate_rate, attend_datas, student)
 }
 
 // 態度、課題、ミニテスト点の取り出し
-function take_input_point(Allocate_point, Allocate_rate, target_datas, student) {
+function take_input_point(
+  Allocate_point,
+  Allocate_rate,
+  target_datas,
+  student
+) {
   // 返送用の箱
   var Points_Array = [];
 
@@ -444,7 +548,9 @@ function take_input_point(Allocate_point, Allocate_rate, target_datas, student) 
 
   if (target_array.length > 0) {
     // 得点率を算出する
-    const target_rate = Math.round((1000 * Number(target_array[3])) / Number(target_array[4])) / 10;
+    const target_rate =
+      Math.round((1000 * Number(target_array[3])) / Number(target_array[4])) /
+      10;
     Points_Array.push(target_rate);
 
     // 率から得点をわりだす。
@@ -462,7 +568,12 @@ function take_input_point(Allocate_point, Allocate_rate, target_datas, student) 
 }
 
 // 模試・週テスト点の取得
-function take_evaluate_point(Allocate_point, Allocate_rate, target_datas, student) {
+function take_evaluate_point(
+  Allocate_point,
+  Allocate_rate,
+  target_datas,
+  student
+) {
   // 返送用の箱
   var Points_Array = [];
 
@@ -474,7 +585,9 @@ function take_evaluate_point(Allocate_point, Allocate_rate, target_datas, studen
     // const target_rate = (Math.round(Number(target_array[2]) / Number(target_array[3])) * 1000) / 10;
     var target_rate = 0;
     if (Number(target_array[2]) > 0) {
-      target_rate = Math.round((1000 * Number(target_array[2])) / Number(target_array[3])) / 10;
+      target_rate =
+        Math.round((1000 * Number(target_array[2])) / Number(target_array[3])) /
+        10;
     } else {
       target_rate = 100;
     }
@@ -534,7 +647,8 @@ function create_subject_GPA(subject_GPA) {
   });
 
   // 表を表示
-  document.querySelector("section.seventhSection table").style.display = "inline-block";
+  document.querySelector("section.seventhSection table").style.display =
+    "inline-block";
 
   // ローダーを非表示
   document.querySelector(".GPA_total_loader").style.display = "none";
@@ -555,7 +669,9 @@ function reserve_GPA(GPA_datas) {
   }
 
   // 科目番号の取得
-  const subject_number = curriculum_relation_lsit.filter((x) => x[1] == grade).filter((x) => x[3] == subject_name)[0][0];
+  const subject_number = curriculum_relation_lsit
+    .filter((x) => x[1] == grade)
+    .filter((x) => x[3] == subject_name)[0][0];
   console.log(subject_number);
 
   // 送信用のデータの作成
