@@ -25,13 +25,19 @@ function thirdSection_click(e) {
   document.querySelector(".newAddition").addEventListener("click", newAddition);
 
   // 戻るボタンを押すと
-  document.querySelector(".return").addEventListener("click", return_button_push);
+  document
+    .querySelector(".return")
+    .addEventListener("click", return_button_push);
 
   // 保存ボタンを押すと
-  document.querySelector(".regist").addEventListener("click", regist_button_click);
+  document
+    .querySelector(".regist")
+    .addEventListener("click", regist_button_click);
 
   // 削除ボタンを押すと
-  document.querySelector(".delete").addEventListener("click", Delete_button_click);
+  document
+    .querySelector(".delete")
+    .addEventListener("click", Delete_button_click);
 }
 
 // ボタンを作成---------------------------------------------------------
@@ -56,7 +62,9 @@ function create_subject_selector() {
 
       const li = document.createElement("li");
 
-      li.innerHTML = `<a href="#" class="subjectName subjectAnime${index + 1}">${item}</a>`;
+      li.innerHTML = `<a href="#" class="subjectName subjectAnime${
+        index + 1
+      }">${item}</a>`;
 
       subject_select_ul.appendChild(li);
     });
@@ -77,11 +85,14 @@ function selectedSubject(element) {
   // クラス選択ボタン
   const klass_button = document.querySelectorAll(".thirdSection .klassName");
 
-  klass_button.forEach((element) => element.addEventListener("click", create_inputed_list));
+  klass_button.forEach((element) =>
+    element.addEventListener("click", create_inputed_list)
+  );
   klass_button[0].focus();
   klass_button[0].click();
 
-  document.querySelector(".thirdSection .subjectDate").value = new Date().toLocaleDateString("sv-SE");
+  document.querySelector(".thirdSection .subjectDate").value =
+    new Date().toLocaleDateString("sv-SE");
 }
 
 // 入力のタイトルを設定----------------------------------------------
@@ -93,7 +104,9 @@ function inputTitle() {
   const subject = document.getElementById("targetSubject").value;
   const klass_name = document.getElementById("Selected_Klass").value;
 
-  document.querySelector(".inputTitle h1").innerText = `(${klass_name})${appli_name}【${subject}】`;
+  document.querySelector(
+    ".inputTitle h1"
+  ).innerText = `(${klass_name})${appli_name}【${subject}】`;
 
   // document.querySelector(".editTitle h1").innerText = `${appli_name}【${subject}】`;
 }
@@ -118,7 +131,8 @@ function inputDisplay_controll() {
 
 // thirdSectionの中身をリセット
 function thirdSection_reset() {
-  document.querySelector(".thirdSection .subjectSelect").style.display = "block";
+  document.querySelector(".thirdSection .subjectSelect").style.display =
+    "block";
 
   document.querySelector(".thirdSection .inputTitle").style.display = "none";
   document.querySelector(".thirdSection .KlassSelect").style.display = "none";
@@ -179,8 +193,10 @@ async function newAddition() {
 // 新規追加の表示の変更
 function newAddition_display() {
   document.querySelector(".thirdSection .editTitle").style.display = "block";
-  document.querySelector(".thirdSection .subjectDetail").style.display = "block";
-  document.querySelector(".thirdSection .actionButtons").style.display = "block";
+  document.querySelector(".thirdSection .subjectDetail").style.display =
+    "block";
+  document.querySelector(".thirdSection .actionButtons").style.display =
+    "block";
   document.querySelector(".thirdSection .inputTable").style.display = "block";
 
   document.querySelector(".thirdSection .KlassSelect").style.display = "none";
@@ -200,7 +216,9 @@ function editTitle_setting() {
   // 入力対象を取得
   const selectedAppli = document.getElementById("selectedAppli").value.slice(2);
 
-  document.querySelector(".editTitle h1").innerText = `【${Selected_Klass}】${selectedAppli}【${targetSubject}】`;
+  document.querySelector(
+    ".editTitle h1"
+  ).innerText = `【${Selected_Klass}】${selectedAppli}【${targetSubject}】`;
 }
 
 // 新規追加のテーブルを作成する
@@ -208,14 +226,16 @@ async function input_table_create() {
   // 対象クラスを取得
   const Selected_Klass = document.getElementById("Selected_Klass").value;
   // console.log(Selected_Klass);
-  
+
   // 学年を取得
   const grade = document.querySelector(".displayButton").innerText;
   // console.log(grade);
 
   // 学生データを抽出
   const Student_List = await get_student_list(grade);
-  const target_student_list = Student_List.filter((x) => x[5] == Selected_Klass);
+  const target_student_list = Student_List.filter(
+    (x) => x[5] == Selected_Klass
+  );
   // console.log(target_student_list);
 
   const inputTable = document.querySelector(".thirdSection .inputTable tbody");
@@ -335,7 +355,9 @@ function return_button_push() {
 
   // 最初のクラスボタンをclick & focus
   setTimeout(() => {
-    const first_klass_button = document.querySelectorAll(".thirdSection .KlassSelect a.klassName")[0];
+    const first_klass_button = document.querySelectorAll(
+      ".thirdSection .KlassSelect a.klassName"
+    )[0];
     first_klass_button.click();
     first_klass_button.focus();
 
@@ -347,8 +369,12 @@ function return_button_push() {
 // input table headerをリセットする
 function input_table_header_reset() {
   document.getElementById("checkAll").checked = true;
-  document.getElementById("dateAll").value = new Date().toLocaleDateString("sv-SE");
-  document.getElementById("selectAll").querySelectorAll("option")[0].selected = true;
+  document.getElementById("dateAll").value = new Date().toLocaleDateString(
+    "sv-SE"
+  );
+  document
+    .getElementById("selectAll")
+    .querySelectorAll("option")[0].selected = true;
   document.getElementById("memoAll").value = "";
 }
 
@@ -412,11 +438,15 @@ async function set_firestore2(Send_Data, appli, subject, klass) {
   const collection_path = document_id[0][1];
   const Total_Collection = collection_path + "_Total";
 
-  const check_id = await FireStoreApp.collection(collection_path).doc(document_id[1]).get();
-  const total_data = await FireStoreApp.collection(Total_Collection).doc(document_id[1]).get();
+  const check_id = await FireStoreApp.collection(collection_path)
+    .doc(document_id[1])
+    .get();
+  const total_data = await FireStoreApp.collection(Total_Collection)
+    .doc(document_id[1])
+    .get();
 
   const total_data_obj = total_data.data();
-  // console.log(check_id.exists);
+  console.log(check_id.exists);
 
   const field_id = document.getElementById("field_id");
 
@@ -437,8 +467,12 @@ async function set_firestore2(Send_Data, appli, subject, klass) {
     const Total_Collection = collection_path + "_Total";
 
     // firebaseへの新規登録
-    await FireStoreApp.collection(collection_path).doc(document_id[1]).set(input_data);
-    await FireStoreApp.collection(Total_Collection).doc(document_id[1]).set(input_total);
+    await FireStoreApp.collection(collection_path)
+      .doc(document_id[1])
+      .set(input_data);
+    await FireStoreApp.collection(Total_Collection)
+      .doc(document_id[1])
+      .set(input_total);
   } else {
     // console.log("更新");
 
@@ -455,8 +489,12 @@ async function set_firestore2(Send_Data, appli, subject, klass) {
 
       total_data_obj[field_id.value] = JSON.stringify(Send_Total);
 
-      await FireStoreApp.collection(collection_path).doc(document_id[1]).set(target_data, { marge: true });
-      await FireStoreApp.collection(Total_Collection).doc(document_id[1]).set(total_data_obj, { marge: true });
+      await FireStoreApp.collection(collection_path)
+        .doc(document_id[1])
+        .set(target_data, { marge: true });
+      await FireStoreApp.collection(Total_Collection)
+        .doc(document_id[1])
+        .set(total_data_obj, { marge: true });
     } else {
       var target_field = "";
       const target_data = check_id.data();
@@ -482,8 +520,12 @@ async function set_firestore2(Send_Data, appli, subject, klass) {
 
       console.log("追加");
 
-      await FireStoreApp.collection(collection_path).doc(document_id[1]).set(target_data, { marge: true });
-      await FireStoreApp.collection(Total_Collection).doc(document_id[1]).set(total_data_obj, { marge: true });
+      await FireStoreApp.collection(collection_path)
+        .doc(document_id[1])
+        .set(target_data, { marge: true });
+      await FireStoreApp.collection(Total_Collection)
+        .doc(document_id[1])
+        .set(total_data_obj, { marge: true });
 
       document.getElementById("field_id").value = target_field;
     }
@@ -494,7 +536,9 @@ async function set_firestore2(Send_Data, appli, subject, klass) {
 
 // テーブルから学生の状態を取得する
 function input_table_student_data() {
-  const Target_Table = document.querySelectorAll(".thirdSection .inputTable table tr");
+  const Target_Table = document.querySelectorAll(
+    ".thirdSection .inputTable table tr"
+  );
 
   // データ返送用の配列
   var Send_Data = [];
@@ -523,7 +567,9 @@ function input_table_student_data() {
 // firestore に保存する
 async function set_firestore(Send_Data, Appli, Subject, Klass) {
   // CollectionNameを取得する
-  const Collection_Name = apply_collect_relation.filter((x) => x[0] == Appli).map((x) => x[1]);
+  const Collection_Name = apply_collect_relation
+    .filter((x) => x[0] == Appli)
+    .map((x) => x[1]);
 
   // console.log(Collection_Name[0]);
   // 集計用にデータを編集する
@@ -537,14 +583,22 @@ async function set_firestore(Send_Data, Appli, Subject, Klass) {
 
   if (firebase_ID.length > 0) {
     // 保存されているか確認をする
-    const check_boolean = await check_firestore(Collection_Name[0], firebase_ID, field_id);
+    const check_boolean = await check_firestore(
+      Collection_Name[0],
+      firebase_ID,
+      field_id
+    );
 
     if (check_boolean) {
       var result = window.confirm("再度保存しますか。");
 
       if (result) {
         // 管理用のデータ保存
-        await FirestoreApp.collection(Collection_Name[0]).doc(Subject).collection(Klass).doc(firebase_ID).set(Send_Data);
+        await FirestoreApp.collection(Collection_Name[0])
+          .doc(Subject)
+          .collection(Klass)
+          .doc(firebase_ID)
+          .set(Send_Data);
 
         //  集計用のデータ保存
         await FirestoreApp.collection(Collection_Name[0] + "_Total")
@@ -561,7 +615,10 @@ async function set_firestore(Send_Data, Appli, Subject, Klass) {
 
       if (result) {
         // 管理用の新規データ
-        const Save_Data = await FirestoreApp.collection(Collection_Name[0]).doc(Subject).collection(Klass).add(Send_Data);
+        const Save_Data = await FirestoreApp.collection(Collection_Name[0])
+          .doc(Subject)
+          .collection(Klass)
+          .add(Send_Data);
         // 集計用の新規データ
         await FirestoreApp.collection(Collection_Name[0] + "_Total")
           .doc(Subject)
@@ -580,7 +637,10 @@ async function set_firestore(Send_Data, Appli, Subject, Klass) {
 
     if (result) {
       // 管理用の新規データ
-      const Save_Data = await FirestoreApp.collection(Collection_Name[0]).doc(Subject).collection(Klass).add(Send_Data);
+      const Save_Data = await FirestoreApp.collection(Collection_Name[0])
+        .doc(Subject)
+        .collection(Klass)
+        .add(Send_Data);
 
       // 集計用の新規データ
       await FirestoreApp.collection(Collection_Name[0] + "_Total")
@@ -597,7 +657,9 @@ async function set_firestore(Send_Data, Appli, Subject, Klass) {
 
 // firestoreにあるか確認する
 async function check_firestore(Appli, firebase_ID, field_id) {
-  const target_data = await FirestoreApp.collection(Appli).doc(firebase_ID).get();
+  const target_data = await FirestoreApp.collection(Appli)
+    .doc(firebase_ID)
+    .get();
   console.log(target_data);
   return target_data.exists;
 }
@@ -613,24 +675,34 @@ async function inputed_data_check() {
   // console.log(Selected_Klass);
 
   // 作業内容
-  const Collection_Name = apply_collect_relation.filter((x) => x[0] == selectedAppli).map((x) => x[1]);
+  const Collection_Name = apply_collect_relation
+    .filter((x) => x[0] == selectedAppli)
+    .map((x) => x[1]);
 
   // 必要なIDを取得する
-  const document_id = getDocumentID(selectedAppli, Selected_Klass, targetSubject);
+  const document_id = getDocumentID(
+    selectedAppli,
+    Selected_Klass,
+    targetSubject
+  );
   // console.log(document_id);
-  
+
   const collection_path = document_id[0][1];
   const document_path = document_id[1];
 
   var Send_Data = [];
 
-  const target_datas = await FireStoreApp.collection(collection_path).doc(document_path).get();
+  const target_datas = await FireStoreApp.collection(collection_path)
+    .doc(document_path)
+    .get();
   // console.log(target_datas.exists);
 
   if (!target_datas.exists) {
     // データが無いとき
     window.alert("データがありません。新規作成してください。");
-    const newAddition_btn = document.querySelector(".thirdSection .newAddition");
+    const newAddition_btn = document.querySelector(
+      ".thirdSection .newAddition"
+    );
     newAddition_btn.childNodes[1].focus();
     // console.log(newAddition_btn.childNodes[1]);
   } else {
@@ -674,7 +746,11 @@ function Edit_list_data(data) {
 
     if (index == 0) {
       // [No、名前、[ID、タイトル、日付]]
-      Send_Data.push(["No", "名前", [element[1], element[2], Month + "/" + Day, element[0]]]);
+      Send_Data.push([
+        "No",
+        "名前",
+        [element[1], element[2], Month + "/" + Day, element[0]],
+      ]);
 
       // [C番号、[学籍番号、名前]、点数]
       element[4].forEach((item, num) => {
@@ -682,7 +758,12 @@ function Edit_list_data(data) {
       });
     } else {
       // [ID、タイトル、日付]
-      Send_Data[0].push([element[1], element[2], Month + "/" + Day, element[0]]);
+      Send_Data[0].push([
+        element[1],
+        element[2],
+        Month + "/" + Day,
+        element[0],
+      ]);
 
       // [点数]
       element[4].forEach((item, num) => {
@@ -712,7 +793,9 @@ function list_table_create(Edited_data) {
           a.href = "#";
           a.innerHTML = `${item[1].substring(0, 4)}<br>${item[2]}
                         <input type="text" value=${item[0]} hidden/>
-                        <input type = "text" class="field_id" value=${item[3]} hidden/>
+                        <input type = "text" class="field_id" value=${
+                          item[3]
+                        } hidden/>
                         <div class="balloon"><p>${item[1]}</p></div>`;
           th.appendChild(a);
           tr.appendChild(th);
@@ -760,7 +843,9 @@ async function edit_link(e) {
   const Selected_Klass = document.getElementById("Selected_Klass").value;
 
   // 作業内容
-  const Collection_Name = apply_collect_relation.filter((x) => x[0] == selectedAppli).map((x) => x[1]);
+  const Collection_Name = apply_collect_relation
+    .filter((x) => x[0] == selectedAppli)
+    .map((x) => x[1]);
 
   // IDを保存しておく
   document.getElementById("firebase_ID").value = target_ID;
@@ -773,7 +858,9 @@ async function edit_link(e) {
   console.log(field_id);
 
   // firebase からデータを拾ってくる
-  var edit_target_data = await FireStoreApp.collection(Collection_Name[0]).doc(target_ID).get();
+  var edit_target_data = await FireStoreApp.collection(Collection_Name[0])
+    .doc(target_ID)
+    .get();
 
   // console.log(JSON.parse(edit_target_data.data()[field_id]));
   input_table_edit(JSON.parse(edit_target_data.data()[field_id]));
@@ -804,10 +891,11 @@ function input_table_edit(data) {
       var target_node = element.querySelectorAll("td");
 
       target_node[0].innerText = student_data[index - 1][0];
-      target_node[1].innerHTML = `<input type="text" class="studentNumber" value="${student_data[index - 1][1]}" hidden >${
-        student_data[index - 1][2]
-      }`;
-      target_node[2].querySelector("input").checked = student_data[index - 1][3];
+      target_node[1].innerHTML = `<input type="text" class="studentNumber" value="${
+        student_data[index - 1][1]
+      }" hidden >${student_data[index - 1][2]}`;
+      target_node[2].querySelector("input").checked =
+        student_data[index - 1][3];
       target_node[3].querySelector("input").value = student_data[index - 1][4];
       target_node[4].querySelectorAll("option").forEach((item, num) => {
         if (item.value == student_data[index - 1][5]) {
@@ -824,7 +912,13 @@ function Edit_Total_db(Send_Data) {
   // console.log(Send_Data);
   const Total_Point = Send_Data.subject_Point;
   const student = JSON.parse(Send_Data.student_data);
-  const reply_data = student.map((x) => [x[0], x[1], x[2], Number(x[5]), Number(Total_Point)]);
+  const reply_data = student.map((x) => [
+    x[0],
+    x[1],
+    x[2],
+    Number(x[5]),
+    Number(Total_Point),
+  ]);
   return reply_data;
 }
 
@@ -841,24 +935,34 @@ async function Delete_button_click(e) {
   const field_id = document.getElementById("field_id").value;
 
   // CollectionNameを取得する
-  const Collection_Name = apply_collect_relation.filter((x) => x[0] == selectedAppli).map((x) => x[1])[0];
+  const Collection_Name = apply_collect_relation
+    .filter((x) => x[0] == selectedAppli)
+    .map((x) => x[1])[0];
 
   const result = window.confirm("削除しますか？");
 
   if (result) {
     if (target_ID.length > 0) {
       // 管理用の削除
-      const target_obj = await FireStoreApp.collection(Collection_Name).doc(target_ID).get();
+      const target_obj = await FireStoreApp.collection(Collection_Name)
+        .doc(target_ID)
+        .get();
       const target_data = target_obj.data();
       delete target_data[field_id];
-      await FireStoreApp.collection(Collection_Name).doc(target_ID).set(target_data);
+      await FireStoreApp.collection(Collection_Name)
+        .doc(target_ID)
+        .set(target_data);
 
       // 集計用の削除
       const collection_path = Collection_Name + "_Total";
-      const total_obj = await FireStoreApp.collection(collection_path).doc(target_ID).get();
+      const total_obj = await FireStoreApp.collection(collection_path)
+        .doc(target_ID)
+        .get();
       const total_data = total_obj.data();
       delete total_data[field_id];
-      await FireStoreApp.collection(collection_path).doc(target_ID).set(total_data);
+      await FireStoreApp.collection(collection_path)
+        .doc(target_ID)
+        .set(total_data);
     }
     // リスト一覧に戻る
     return_button_push();
