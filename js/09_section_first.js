@@ -61,21 +61,19 @@ async function get_GPA_main_data(curriculum_list) {
   const curriculum_numbers = curriculum_list.map((x) => x[0]);
   // console.log(curriculum_numbers);
 
-
   // firebaseからコレクションを取ってくる
   const GPA_collection = await FireStoreApp.collection("GPA_Subject_Data").get();
 
   // コレクションの中のドキュメント一覧
   const target_documents = GPA_collection.docs.map((x) => x.id);
   // console.log(target_documents);
-  
+
   // docIDからデータを取ってくる
   const GPA_raw_data = [];
   for (let index = 0; index < target_documents.length; index++) {
     const element = target_documents[index];
 
     if (curriculum_numbers.includes(element)) {
-      
       await FireStoreApp.collection("GPA_Subject_Data")
         .doc(element)
         .get()
@@ -88,18 +86,52 @@ async function get_GPA_main_data(curriculum_list) {
 
     //　GPA一覧確認用
   }
-  
-  if (target_grade=="専") {
-    target_grade = "専攻科"
+
+  if (target_grade == "専") {
+    target_grade = "専攻科";
   }
-  
+
+  // console.log(student_list);
   const student_count = student_list.filter((x) => x[6] == target_grade).length;
-  // console.log(student_count);
+  // console.log("学生数⇒" + student_count);
   // console.log(GPA_raw_data);
   const GPA_filtered = GPA_raw_data.filter((x) => x[0].length == student_count);
-  console.log(GPA_filtered);
-  
-  return [GPA_filtered, curriculum_list];
+  // console.log(GPA_filtered);
+
+  // 退学者も含めたGPA一覧の作成
+  const GPA_maped = GPA_mapping(student_list, GPA_raw_data, target_grade);
+  // console.log(GPA_maped);
+
+  return [GPA_maped, curriculum_list];
+}
+
+// 退学した人も含めてGPAを算出する
+function GPA_mapping(student_list, GPA_raw_data, target_grade) {
+  // console.log(student_list);
+  // console.log(GPA_raw_data);
+
+  let reply_array = [];
+  GPA_raw_data.forEach((item) => {
+    const Klass_hours = item[1];
+    const subject_name = item[2];
+    const target_name_list = item[0].map((x) => x[1]);
+    const target_students = student_list.filter((x) => x[6] == target_grade);
+    let temp_array = [];
+
+    target_students.forEach((element) => {
+      // 全リストの中から、在校生に一致するかを確認
+      let target_row = target_name_list.indexOf(element[3]);
+      if (target_row >= 0) {
+        temp_array.push([element[2], element[3], item[0][target_row][2], item[0][target_row][3]]);
+      } else {
+        temp_array.push([element[2], element[3], "不可", 0]);
+      }
+    });
+    reply_array.push([temp_array, Klass_hours, subject_name]);
+  });
+  // console.log(reply_array);
+
+  return reply_array;
 }
 
 // データを編集して表に入れる
@@ -190,8 +222,8 @@ async function table_set_GPA_data(body, header, table) {
   // 学年を取得
   var grade = document.querySelector(".displayButton").innerText;
 
-  if (grade=="専") {
-    grade="専攻科"
+  if (grade == "専") {
+    grade = "専攻科";
   }
 
   const export_data = {
