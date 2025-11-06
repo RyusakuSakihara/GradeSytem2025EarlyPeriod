@@ -91,13 +91,6 @@ async function get_GPA_main_data(curriculum_list) {
     target_grade = "専攻科";
   }
 
-  // console.log(student_list);
-  const student_count = student_list.filter((x) => x[6] == target_grade).length;
-  // console.log("学生数⇒" + student_count);
-  // console.log(GPA_raw_data);
-  const GPA_filtered = GPA_raw_data.filter((x) => x[0].length == student_count);
-  // console.log(GPA_filtered);
-
   // 退学者も含めたGPA一覧の作成
   const GPA_maped = GPA_mapping(student_list, GPA_raw_data, target_grade);
   // console.log(GPA_maped);
